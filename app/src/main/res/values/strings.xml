@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">StockMarketSearch</string>
+
+    <string name="stockMarketSearchTitle">Stock Market Search</string>
+    <string name="stockQuoteInputHint">e.g. AAPL</string>
+    <string name="getQuote">Get Quote</string>
+    <string name="clear">Clear</string>
 </resources>
