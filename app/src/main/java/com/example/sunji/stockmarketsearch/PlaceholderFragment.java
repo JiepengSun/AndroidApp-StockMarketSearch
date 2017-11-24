@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -112,6 +113,13 @@ public class PlaceholderFragment extends Fragment {
             data.add("123");
         }
         stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
+
+
+        // Show Details Chart Using Web View
+        String url = "https://www.google.com";
+        WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(url);
 
 
         // Indicator Spinner
