@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -116,9 +117,12 @@ public class PlaceholderFragment extends Fragment {
 
 
         // Show Details Chart Using Web View
-        String url = "https://www.google.com";
+        //String url = "https://www.google.com";
+
+        String url = "file:///android_asset/www/index.html";
         WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebChromeClient(new WebChromeClient());
         webView.loadUrl(url);
 
 
