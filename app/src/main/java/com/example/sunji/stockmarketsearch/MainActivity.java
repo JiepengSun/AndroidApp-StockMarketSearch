@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                     // Toast.makeText(MainActivity.this, "The Inout is: " + input, Toast.LENGTH_LONG).show();
                     // Active Stock Details Activity
                     Intent intent = new Intent(MainActivity.this, StockDetailsActivity.class);
-                    intent.putExtra("symbol", input);
+                    intent.putExtra("symbolTitle", input);
                     startActivityForResult(intent, REQ_CODE_STOCK_DETAILS_ACTIVITY);
                 } else {
                     Toast.makeText(MainActivity.this, "Please Enter a Stock Name or Symbol", Toast.LENGTH_LONG).show();

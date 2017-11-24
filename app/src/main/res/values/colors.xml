@@ -14,4 +14,7 @@
     <color name="tabText">#aeaeae</color>
     <color name="tabIndicator">#000000</color>
     <color name="tabSelectedText">#FFFFFF</color>
+    <color name="stockItemHeader">#000000</color>
+    <color name="stockItemContent">#000000</color>
+    <color name="stockListViewDivider">#ffeeeeee</color>
 </resources>

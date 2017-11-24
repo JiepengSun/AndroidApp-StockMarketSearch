@@ -28,7 +28,7 @@ public class StockDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stock_details);
 
         // Set Action Bar Title
-        String actionbarTitle = getIntent().getStringExtra("symbol");
+        String actionbarTitle = getIntent().getStringExtra("symbolTitle");
         setTitle(actionbarTitle);
 
         // Create the adapter that will return a fragment for each of the three primary sections of the activity.
@@ -40,7 +40,6 @@ public class StockDetailsActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.viewPagerTabLayout);
         tabLayout.setupWithViewPager(mViewPager);
-
     }
 
     @Override
