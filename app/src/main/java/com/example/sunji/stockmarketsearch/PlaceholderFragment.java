@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -118,12 +119,22 @@ public class PlaceholderFragment extends Fragment {
 
         // Show Details Chart Using Web View
         //String url = "https://www.google.com";
-
         String url = "file:///android_asset/www/index.html";
-        WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
+        //String url = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getStockQuote?symbol=AAPL";
+        final WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebChromeClient(new WebChromeClient());
+
         webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished (WebView view, String url) {
+                //Toast.makeText(getActivity(), "!!!!!!" , Toast.LENGTH_LONG).show();
+                webView.loadUrl("javascript:callFromActivity()");
+            }
+        });
+
+
+
 
 
         // Indicator Spinner
