@@ -10,4 +10,17 @@
     <string name="stockDetails">Stock Details</string>
     <string name="historical">Historical</string>
     <string name="news">News</string>
+    <string name="indicators">Indicators</string>
+    <string name="change">Change</string>
+    <string-array name="indicatorSpinner">
+        <item>Price</item>
+        <item>SMA</item>
+        <item>EMA</item>
+        <item>STOCH</item>
+        <item>RSI</item>
+        <item>ADX</item>
+        <item>CCI</item>
+        <item>BBANDS</item>
+        <item>MACD</item>
+    </string-array>
 </resources>

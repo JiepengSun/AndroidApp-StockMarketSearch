@@ -1,12 +1,18 @@
 package com.example.sunji.stockmarketsearch;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,7 +45,7 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView;
+        View rootView = inflater.inflate(R.layout.fragment_current, container, false);;
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
             case 1:
                 rootView = inflater.inflate(R.layout.fragment_current, container, false);
@@ -48,23 +54,27 @@ public class PlaceholderFragment extends Fragment {
             case 2:
                 rootView = inflater.inflate(R.layout.fragment_historial, container, false);
                 break;
-            default:
+            case 3:
                 rootView = inflater.inflate(R.layout.fragment_news, container, false);
                 break;
-//          default:
-//              rootView = inflater.inflate(R.layout.fragment_stock_details, container, false);
-//              TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-//              textView.setText("Hello World");
         }
         return rootView;
     }
 
-    boolean addToFavList = false;
-
     // CURRENT PAGE //
+    boolean addToFavList = false;
     public View setCurrentView(View currentView) {
 
-        // Add to Favourite List
+        // Init Current View
+        if(addToFavList) {
+            ((ImageView) currentView.findViewById(R.id.imageFavourite)).setImageResource(R.drawable.ic_star_black_24px);
+        }
+        if(!activeChange) {
+            ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#6F6F6F"));
+        }
+
+
+        // Favourite List Button
         final ImageView imageFav = (ImageView) currentView.findViewById(R.id.imageFavourite);
         imageFav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,8 +82,6 @@ public class PlaceholderFragment extends Fragment {
                 if(!addToFavList) {
                     imageFav.setImageResource(R.drawable.ic_star_black_24px);
                     addToFavList = true;
-                    String actionbarTitle = getActivity().getIntent().getStringExtra("symbolTitle");
-                    //Toast.makeText(getActivity(), "The Inout is: " + actionbarTitle, Toast.LENGTH_LONG).show();
                 } else {
                     imageFav.setImageResource(R.drawable.ic_star_border_black_24px);
                     addToFavList = false;
@@ -81,9 +89,9 @@ public class PlaceholderFragment extends Fragment {
             }
         });
 
+
         // Stock Details List View
         ListView stockListView = (ListView) currentView.findViewById(R.id.stockListView);
-
         // Set Header
         ArrayList<String> header = new ArrayList<>();
         header.add("Stock Symbol");
@@ -94,15 +102,59 @@ public class PlaceholderFragment extends Fragment {
         header.add("Close");
         header.add("Day's Range");
         header.add("Volume");
-
         // Set Data
         ArrayList<String> data = new ArrayList<>();
         for(int i = 0; i < 8; i++) {
             data.add("123");
         }
-
         stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
+
+
+        // Indicator Spinner
+        final Spinner spinner = (Spinner) currentView.findViewById(R.id.indicatorSpinner);
+        // Spinner Adapter
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.indicatorSpinner, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        // Spinner Selected Listener
+        spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+
+
+        // Change Button
+        final TextView change = (TextView) currentView.findViewById(R.id.change);
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(activeChange) {
+                    String text = spinner.getSelectedItem().toString();
+                    Toast.makeText(getActivity(), "Indicator is: " + text, Toast.LENGTH_LONG).show();
+                    change.setTextColor(Color.parseColor("#6F6F6F"));
+                    activeChange = false;
+                }
+            }
+        });
 
         return currentView;
     }
+
+    // Spinner Item Selected Listener
+    boolean initSpinner = true;
+    boolean activeChange = false;
+    public class CustomOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+           if(initSpinner) {
+               if(!parent.getItemAtPosition(pos).toString().equals("Price")) {
+                   activeChange = true;
+                   ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
+                   initSpinner = false;
+               }
+           } else {
+               activeChange = true;
+               ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
+           }
+        }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    }
+
 }

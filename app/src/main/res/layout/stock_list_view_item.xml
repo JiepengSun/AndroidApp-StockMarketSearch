@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="start"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:textColor="@color/stockItemHeader"
         tools:text="StockDetails" />
 
@@ -25,7 +25,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="start"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:textColor="@color/stockItemContent"
         tools:text="BlaBla" />
 

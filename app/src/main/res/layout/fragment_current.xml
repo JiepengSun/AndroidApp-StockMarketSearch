@@ -45,9 +45,56 @@
             android:layout_marginTop="16dp"
             android:id="@+id/stockListView"
             android:layout_width="match_parent"
-            android:layout_height="512dp">
-
+            android:layout_height="320dp">
         </ListView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_weight="3"
+                android:text="@string/indicators"
+                android:textColor="@color/indicators"
+                android:textSize="24sp" />
+
+            <Spinner
+                android:id="@+id/indicatorSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:layout_gravity="bottom" />
+
+            <TextView
+                android:id="@+id/change"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_weight="2"
+                android:text="@string/change"
+                android:textColor="@color/change"
+                android:textSize="24sp" />
+
+
+            <!--<ImageView-->
+            <!--android:id="@+id/imageFacebook"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_marginStart="16dp"-->
+            <!--android:src="@mipmap/facebook_icon"/>-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/imageFavourite"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_marginStart="16dp"-->
+            <!--android:src="@drawable/ic_star_border_black_24px"/>-->
+
+        </LinearLayout>
 
 
     </LinearLayout>
