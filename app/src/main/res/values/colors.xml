@@ -18,5 +18,5 @@
     <color name="stockItemContent">#000000</color>
     <color name="stockListViewDivider">#ffeeeeee</color>
     <color name="indicators">#000000</color>
-    <color name="change">#6F6F6F</color>
+    <color name="change">#000000</color>
 </resources>

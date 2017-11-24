@@ -63,6 +63,10 @@ public class PlaceholderFragment extends Fragment {
 
     // CURRENT PAGE //
     boolean addToFavList = false;
+    boolean activeChange = false;
+    String prevIndicator = "Price";
+    String curIndicator;
+
     public View setCurrentView(View currentView) {
 
         // Init Current View
@@ -70,7 +74,7 @@ public class PlaceholderFragment extends Fragment {
             ((ImageView) currentView.findViewById(R.id.imageFavourite)).setImageResource(R.drawable.ic_star_black_24px);
         }
         if(!activeChange) {
-            ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#6F6F6F"));
+            ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#868686"));
         }
 
 
@@ -128,7 +132,7 @@ public class PlaceholderFragment extends Fragment {
                 if(activeChange) {
                     String text = spinner.getSelectedItem().toString();
                     Toast.makeText(getActivity(), "Indicator is: " + text, Toast.LENGTH_LONG).show();
-                    change.setTextColor(Color.parseColor("#6F6F6F"));
+                    change.setTextColor(Color.parseColor("#868686"));
                     activeChange = false;
                 }
             }
@@ -138,20 +142,14 @@ public class PlaceholderFragment extends Fragment {
     }
 
     // Spinner Item Selected Listener
-    boolean initSpinner = true;
-    boolean activeChange = false;
     public class CustomOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-           if(initSpinner) {
-               if(!parent.getItemAtPosition(pos).toString().equals("Price")) {
-                   activeChange = true;
-                   ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
-                   initSpinner = false;
-               }
-           } else {
-               activeChange = true;
-               ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
-           }
+            curIndicator = parent.getItemAtPosition(pos).toString();
+            if(!curIndicator.equals(prevIndicator)) {
+                activeChange = true;
+                ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
+                prevIndicator = curIndicator;
+            }
         }
         public void onNothingSelected(AdapterView<?> parent) {
         }
