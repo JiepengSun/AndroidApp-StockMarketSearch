@@ -45,12 +45,24 @@ public class PlaceholderFragment extends Fragment {
         return fragment;
     }
 
+    View prevCurrentView;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_current, container, false);;
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
             case 1:
+//                if(!alreadyGetCurrent) {
+//                    rootView = inflater.inflate(R.layout.fragment_current, container, false);
+//                    rootView = setCurrentView(rootView);
+//                    prevCurrentView = rootView;
+//                    alreadyGetCurrent = true;
+//                } else {
+//                    rootView = setCurrentView(prevCurrentView);
+//                    prevCurrentView = rootView;
+//                }
                 rootView = inflater.inflate(R.layout.fragment_current, container, false);
                 rootView = setCurrentView(rootView);
                 break;
@@ -64,12 +76,16 @@ public class PlaceholderFragment extends Fragment {
         return rootView;
     }
 
-    // CURRENT PAGE //
+    // Global Variables //
     boolean addToFavList = false;
     boolean activeChange = false;
     String prevIndicator = "Price";
     String curIndicator;
+    String symbol;
 
+    boolean alreadyGetCurrent = false;
+
+    // CURRENT PAGE //
     public View setCurrentView(View currentView) {
 
         // Init Current View
@@ -116,26 +132,36 @@ public class PlaceholderFragment extends Fragment {
         }
         stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
 
-
         // Show Details Chart Using Web View
-        //String url = "https://www.google.com";
-        String url = "file:///android_asset/www/index.html";
-        //String url = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getStockQuote?symbol=AAPL";
         final WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
         webView.getSettings().setJavaScriptEnabled(true);
 
+        String url = "file:///android_asset/www/getStockDetailsChart.html";
         webView.loadUrl(url);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished (WebView view, String url) {
-                //Toast.makeText(getActivity(), "!!!!!!" , Toast.LENGTH_LONG).show();
-                webView.loadUrl("javascript:callFromActivity()");
+                symbol = getActivity().getIntent().getStringExtra("symbolTitle");
+                webView.loadUrl("javascript:getPrice('" + symbol + "')");
+                //Toast.makeText(getActivity(), "The symbol is: " + symbol, Toast.LENGTH_LONG).show();
             }
         });
 
-
-
-
+//        if(!alreadyGetCurrent) {
+//            String url = "file:///android_asset/www/getStockDetailsChart.html";
+//            webView.loadUrl(url);
+//            webView.setWebViewClient(new WebViewClient() {
+//                @Override
+//                public void onPageFinished (WebView view, String url) {
+//                    symbol = getActivity().getIntent().getStringExtra("symbolTitle");
+//                    webView.loadUrl("javascript:getPrice('" + symbol + "')");
+//                    //Toast.makeText(getActivity(), "The symbol is: " + symbol, Toast.LENGTH_LONG).show();
+//                }
+//            });
+//            alreadyGetCurrent = true;
+//        } else {
+//            webView.loadUrl("javascript:drawChart()");
+//        }
 
         // Indicator Spinner
         final Spinner spinner = (Spinner) currentView.findViewById(R.id.indicatorSpinner);
@@ -153,10 +179,44 @@ public class PlaceholderFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(activeChange) {
-                    String text = spinner.getSelectedItem().toString();
-                    Toast.makeText(getActivity(), "Indicator is: " + text, Toast.LENGTH_LONG).show();
+                    // Set Color
                     change.setTextColor(Color.parseColor("#868686"));
                     activeChange = false;
+
+                    // Call JavaScript Functions
+                    String spinnerText = spinner.getSelectedItem().toString();
+                    switch (spinnerText) {
+                        case "Price":
+                            webView.loadUrl("javascript:getPrice('" + symbol + "')");
+                            break;
+                        case "SMA":
+                            webView.loadUrl("javascript:getSMA('" + symbol + "')");
+                            break;
+                        case "EMA":
+                            webView.loadUrl("javascript:getEMA('" + symbol + "')");
+                            break;
+                        case "STOCH":
+                            webView.loadUrl("javascript:getSTOCH('" + symbol + "')");
+                            break;
+                        case "RSI":
+                            webView.loadUrl("javascript:getRSI('" + symbol + "')");
+                            break;
+                        case "ADX":
+                            webView.loadUrl("javascript:getADX('" + symbol + "')");
+                            break;
+                        case "CCI":
+                            webView.loadUrl("javascript:getCCI('" + symbol + "')");
+                            break;
+                        case "BBANDS":
+                            webView.loadUrl("javascript:getBBANDS('" + symbol + "')");
+                            break;
+                        case "MACD":
+                            webView.loadUrl("javascript:getMACD('" + symbol + "')");
+                            break;
+                    }
+
+
+
                 }
             }
         });
