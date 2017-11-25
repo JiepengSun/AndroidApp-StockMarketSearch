@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -49,22 +50,30 @@ public class PlaceholderFragment extends Fragment {
     }
 
     //ListView stockListView;
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_current, container, false);;
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+
+        Toast.makeText(getActivity(), "" + getArguments().getInt(ARG_SECTION_NUMBER), Toast.LENGTH_LONG).show();
+
+        View rootView;
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-            case 1:
+            case 0:
                 rootView = inflater.inflate(R.layout.fragment_current, container, false);
                 rootView = setCurrentView(rootView);
                 break;
-            case 2:
+            case 1:
                 rootView = inflater.inflate(R.layout.fragment_historial, container, false);
                 rootView = setHistoricalView(rootView);
                 break;
-            case 3:
+            case 2:
                 rootView = inflater.inflate(R.layout.fragment_news, container, false);
+                rootView = setNewsView(rootView);
+                break;
+            default:
+                rootView = inflater.inflate(R.layout.fragment_current, container, false);
                 break;
         }
         return rootView;
@@ -98,7 +107,6 @@ public class PlaceholderFragment extends Fragment {
     }
 
     public void updateStockDetailsListView() {
-        //Toast.makeText(getActivity(), "The received data from interface is: " + dataFromJS[0], Toast.LENGTH_LONG).show();
         final ListView stockListView = (ListView) getActivity().findViewById(R.id.stockListView);
 
         // Set Header & Data
@@ -111,7 +119,7 @@ public class PlaceholderFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                stockListView.setAdapter(new ListViewAdapter(getActivity(), headerInListView, dataInListView));
+                stockListView.setAdapter(new StockDetailsListViewAdapter(getActivity(), headerInListView, dataInListView));
             }
         });
     }
@@ -154,7 +162,7 @@ public class PlaceholderFragment extends Fragment {
             dataInListView.add("");
         }
         // Update List View
-        stockListView.setAdapter(new ListViewAdapter(getActivity(), headerInListView, dataInListView));
+        stockListView.setAdapter(new StockDetailsListViewAdapter(getActivity(), headerInListView, dataInListView));
 
 
         // Show Details Chart Using Web View
@@ -235,6 +243,22 @@ public class PlaceholderFragment extends Fragment {
         return currentView;
     }
 
+
+    // Spinner Item Selected Listener
+    public class CustomOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            curIndicator = parent.getItemAtPosition(pos).toString();
+            if(!curIndicator.equals(prevIndicator)) {
+                activeChange = true;
+                ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
+                prevIndicator = curIndicator;
+            }
+        }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    }
+
+
     // HISTORICAL PAGE //
     public View setHistoricalView(View historicalView) {
 
@@ -257,18 +281,29 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-    // Spinner Item Selected Listener
-    public class CustomOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            curIndicator = parent.getItemAtPosition(pos).toString();
-            if(!curIndicator.equals(prevIndicator)) {
-                activeChange = true;
-                ((TextView) getActivity().findViewById(R.id.change)).setTextColor(Color.parseColor("#000000"));
-                prevIndicator = curIndicator;
-            }
+    // NEWS PAGE //
+    public View setNewsView(View newsView) {
+
+        // News List View
+        ListView newsListView = (ListView) newsView.findViewById(R.id.newsListView);
+
+        // Set Title & Author & Date
+        ArrayList<String> titleInListView  = new ArrayList<>();
+
+        ArrayList<String> authorInListView = new ArrayList<>();
+
+        ArrayList<String> dateInListView = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            titleInListView.add("Title");
+            authorInListView.add("Author");
+            dateInListView.add("Date");
         }
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
+
+        // Update List View
+        newsListView.setAdapter(new NewsListViewAdapter(getActivity(), titleInListView, authorInListView, dateInListView));
+
+        return newsView;
     }
 
 }

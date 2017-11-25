@@ -19,11 +19,6 @@ function initChartProperties() {
     series = {};
     plotOptions = {
         series: {
-            marker: {
-                enabled: true,
-                symbol: 'square',
-                radius: 2
-            },
             lineWidth: 1
         }
     }
