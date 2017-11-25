@@ -68,6 +68,7 @@ public class PlaceholderFragment extends Fragment {
                 break;
             case 2:
                 rootView = inflater.inflate(R.layout.fragment_historial, container, false);
+                rootView = setHistoricalView(rootView);
                 break;
             case 3:
                 rootView = inflater.inflate(R.layout.fragment_news, container, false);
@@ -222,6 +223,27 @@ public class PlaceholderFragment extends Fragment {
         });
 
         return currentView;
+    }
+
+    // HISTORICAL PAGE //
+    public View setHistoricalView(View historicalView) {
+
+        // Show Details Chart Using Web View
+        final WebView webView = (WebView) historicalView.findViewById(R.id.historicalChartWebView);
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        String url = "file:///android_asset/www/getHistoricalChart.html";
+        webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished (WebView view, String url) {
+                symbol = getActivity().getIntent().getStringExtra("symbolTitle");
+                webView.loadUrl("javascript:getHistoricalChart('" + symbol + "')");
+                //Toast.makeText(getActivity(), "The symbol is: " + symbol, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        return historicalView;
     }
 
     // Spinner Item Selected Listener

@@ -38,6 +38,7 @@ var arrayMACDHist = [];
 var arrayMACDSignal = [];
 
 // Historical Chart Data
+var historicalChartSymbol;
 var arrayHistoricalChart = [];
 
 // News Feed Data
