@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -72,12 +73,13 @@ public class PlaceholderFragment extends Fragment {
     // Global Variables //
     boolean addToFavList = false;
     boolean activeChange = false;
+
     String prevIndicator = "Price";
     String curIndicator;
     String symbol;
 
-
-    String temp;
+    String[] headers = {"Stock Symbol", "Last Price", "Change", "Timestamp", "Open", "Close", "Day's Range", "Volume"};
+    String[] dataFromJS;
 
     // JavaScript Interface
     private class WebAppInterface {
@@ -88,36 +90,28 @@ public class PlaceholderFragment extends Fragment {
         }
 
         @JavascriptInterface
-        public void showToast(String toast) {
-            //Toast.makeText(mContext, toast, Toast.LENGTH_LONG).show();
-            temp = toast;
-            showResult();
+        public void getStockDetailsData(String[] data) {
+            dataFromJS = data;
+            updateStockDetailsListView();
         }
 
     }
 
-    public void showResult() {
-        //Toast.makeText(getActivity(), "The received data from interface is: " + temp, Toast.LENGTH_LONG).show();
+    public void updateStockDetailsListView() {
+        //Toast.makeText(getActivity(), "The received data from interface is: " + dataFromJS[0], Toast.LENGTH_LONG).show();
         final ListView stockListView = (ListView) getActivity().findViewById(R.id.stockListView);
-        // Set Header
-        final ArrayList<String> header = new ArrayList<>();
-        header.add("Stock Symbol");
-        header.add("Last Price");
-        header.add("Change");
-        header.add("Timestamp");
-        header.add("Open");
-        header.add("Close");
-        header.add("Day's Range");
-        header.add("Volume");
-        // Set Data
-        final ArrayList<String> data = new ArrayList<>();
-        for(int i = 0; i < 8; i++) {
-            data.add(temp);
-        }
+
+        // Set Header & Data
+        final ArrayList<String> headerInListView = new ArrayList<>();
+        headerInListView.addAll(Arrays.asList(headers).subList(0, 8));
+        final ArrayList<String> dataInListView = new ArrayList<>();
+        dataInListView.addAll(Arrays.asList(dataFromJS).subList(0, 8));
+
+        // Update List View
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
+                stockListView.setAdapter(new ListViewAdapter(getActivity(), headerInListView, dataInListView));
             }
         });
     }
@@ -152,22 +146,15 @@ public class PlaceholderFragment extends Fragment {
 
         // Stock Details List View
         ListView stockListView = (ListView) currentView.findViewById(R.id.stockListView);
-        // Set Header
-        ArrayList<String> header = new ArrayList<>();
-        header.add("Stock Symbol");
-        header.add("Last Price");
-        header.add("Change");
-        header.add("Timestamp");
-        header.add("Open");
-        header.add("Close");
-        header.add("Day's Range");
-        header.add("Volume");
-        // Set Data
-        ArrayList<String> data = new ArrayList<>();
+        // Set Header & Data
+        ArrayList<String> headerInListView = new ArrayList<>();
+        headerInListView.addAll(Arrays.asList(headers).subList(0, 8));
+        ArrayList<String> dataInListView = new ArrayList<>();
         for(int i = 0; i < 8; i++) {
-            data.add("init data");
+            dataInListView.add("");
         }
-        stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
+        // Update List View
+        stockListView.setAdapter(new ListViewAdapter(getActivity(), headerInListView, dataInListView));
 
 
         // Show Details Chart Using Web View
@@ -195,7 +182,6 @@ public class PlaceholderFragment extends Fragment {
         spinner.setAdapter(adapter);
         // Spinner Selected Listener
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
-
 
 
         // Change Button
@@ -269,6 +255,7 @@ public class PlaceholderFragment extends Fragment {
 
         return historicalView;
     }
+
 
     // Spinner Item Selected Listener
     public class CustomOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {

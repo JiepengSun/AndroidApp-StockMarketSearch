@@ -93,7 +93,19 @@ function drawPriceChart() {
 }
 
 function sendDataToActivity() {
-    Android.showToast("Data from JS");
+    //Android.showToast("Data from JS");
+    var stockDetailsData = [];
+    stockDetailsData.push(symbol);
+    stockDetailsData.push(lastPrice);
+    stockDetailsData.push(change + " (" + changePercent + "%) ");
+    stockDetailsData.push(timestamp);
+    stockDetailsData.push(open);
+    stockDetailsData.push(close);
+    stockDetailsData.push(low + " - " + high);
+    stockDetailsData.push(volume);
+
+    Android.getStockDetailsData(stockDetailsData);
+    //Android.showToast("Data from JS");
 }
 
 // Get SMA //
