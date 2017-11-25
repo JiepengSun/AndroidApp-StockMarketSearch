@@ -53,6 +53,7 @@ public class ListViewAdapter extends BaseAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.stock_list_view_item, null);
         ((TextView) view.findViewById(R.id.stockItemHeader)).setText(header.get(position));
         ((TextView) view.findViewById(R.id.stockItemContent)).setText(data.get(position));
+        notifyDataSetChanged();
         return view;
     }
 }

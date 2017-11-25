@@ -1,12 +1,14 @@
 package com.example.sunji.stockmarketsearch;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -45,8 +47,7 @@ public class PlaceholderFragment extends Fragment {
         return fragment;
     }
 
-    View prevCurrentView;
-
+    //ListView stockListView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,15 +55,6 @@ public class PlaceholderFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_current, container, false);;
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
             case 1:
-//                if(!alreadyGetCurrent) {
-//                    rootView = inflater.inflate(R.layout.fragment_current, container, false);
-//                    rootView = setCurrentView(rootView);
-//                    prevCurrentView = rootView;
-//                    alreadyGetCurrent = true;
-//                } else {
-//                    rootView = setCurrentView(prevCurrentView);
-//                    prevCurrentView = rootView;
-//                }
                 rootView = inflater.inflate(R.layout.fragment_current, container, false);
                 rootView = setCurrentView(rootView);
                 break;
@@ -84,7 +76,51 @@ public class PlaceholderFragment extends Fragment {
     String curIndicator;
     String symbol;
 
-    boolean alreadyGetCurrent = false;
+
+    String temp;
+
+    // JavaScript Interface
+    private class WebAppInterface {
+        Context mContext;
+
+        WebAppInterface(Context c) {
+            mContext = c;
+        }
+
+        @JavascriptInterface
+        public void showToast(String toast) {
+            //Toast.makeText(mContext, toast, Toast.LENGTH_LONG).show();
+            temp = toast;
+            showResult();
+        }
+
+    }
+
+    public void showResult() {
+        //Toast.makeText(getActivity(), "The received data from interface is: " + temp, Toast.LENGTH_LONG).show();
+        final ListView stockListView = (ListView) getActivity().findViewById(R.id.stockListView);
+        // Set Header
+        final ArrayList<String> header = new ArrayList<>();
+        header.add("Stock Symbol");
+        header.add("Last Price");
+        header.add("Change");
+        header.add("Timestamp");
+        header.add("Open");
+        header.add("Close");
+        header.add("Day's Range");
+        header.add("Volume");
+        // Set Data
+        final ArrayList<String> data = new ArrayList<>();
+        for(int i = 0; i < 8; i++) {
+            data.add(temp);
+        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
+            }
+        });
+    }
 
     // CURRENT PAGE //
     public View setCurrentView(View currentView) {
@@ -129,13 +165,15 @@ public class PlaceholderFragment extends Fragment {
         // Set Data
         ArrayList<String> data = new ArrayList<>();
         for(int i = 0; i < 8; i++) {
-            data.add("123");
+            data.add("init data");
         }
         stockListView.setAdapter(new ListViewAdapter(getActivity(), header, data));
+
 
         // Show Details Chart Using Web View
         final WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
 
         String url = "file:///android_asset/www/getStockDetailsChart.html";
         webView.loadUrl(url);
@@ -144,25 +182,10 @@ public class PlaceholderFragment extends Fragment {
             public void onPageFinished (WebView view, String url) {
                 symbol = getActivity().getIntent().getStringExtra("symbolTitle");
                 webView.loadUrl("javascript:getPrice('" + symbol + "')");
-                //Toast.makeText(getActivity(), "The symbol is: " + symbol, Toast.LENGTH_LONG).show();
+
             }
         });
 
-//        if(!alreadyGetCurrent) {
-//            String url = "file:///android_asset/www/getStockDetailsChart.html";
-//            webView.loadUrl(url);
-//            webView.setWebViewClient(new WebViewClient() {
-//                @Override
-//                public void onPageFinished (WebView view, String url) {
-//                    symbol = getActivity().getIntent().getStringExtra("symbolTitle");
-//                    webView.loadUrl("javascript:getPrice('" + symbol + "')");
-//                    //Toast.makeText(getActivity(), "The symbol is: " + symbol, Toast.LENGTH_LONG).show();
-//                }
-//            });
-//            alreadyGetCurrent = true;
-//        } else {
-//            webView.loadUrl("javascript:drawChart()");
-//        }
 
         // Indicator Spinner
         final Spinner spinner = (Spinner) currentView.findViewById(R.id.indicatorSpinner);
@@ -172,6 +195,7 @@ public class PlaceholderFragment extends Fragment {
         spinner.setAdapter(adapter);
         // Spinner Selected Listener
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+
 
 
         // Change Button

@@ -72,6 +72,7 @@ function getPriceData(jsonObj) {
 	Price_title = symbol + " Stock Price and Volume";
 
 	drawPriceChart();
+	sendDataToActivity();
 }
 
 function drawPriceChart() {
@@ -89,6 +90,10 @@ function drawPriceChart() {
     ];
     plotOptions = {};
     drawChart() ;
+}
+
+function sendDataToActivity() {
+    Android.showToast("Data from JS");
 }
 
 // Get SMA //
