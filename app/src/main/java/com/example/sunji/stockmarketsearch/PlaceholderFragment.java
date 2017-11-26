@@ -2,7 +2,9 @@ package com.example.sunji.stockmarketsearch;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -184,6 +186,7 @@ public class PlaceholderFragment extends Fragment {
         titleInListView.addAll(Arrays.asList(titleFromJS).subList(0, titleFromJS.length));
         authorInListView.addAll(Arrays.asList(authorFromJS).subList(0, authorFromJS.length));
         dateInListView.addAll(Arrays.asList(dateFromJS).subList(0, dateFromJS.length));
+        linkInListView.addAll(Arrays.asList(linkFromJS).subList(0, linkFromJS.length));
 
         // Update UI
         getActivity().runOnUiThread(new Runnable() {
@@ -192,6 +195,15 @@ public class PlaceholderFragment extends Fragment {
                 newsListView.setVisibility(View.VISIBLE);
                 newsListView.setAdapter(new NewsListViewAdapter(getActivity(), titleInListView, authorInListView, dateInListView));
                 progressNews.setVisibility(View.GONE);
+            }
+        });
+
+        // Click List and Go To Browser
+        newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkInListView.get(position)));
+                startActivity(browserIntent);
             }
         });
     }
