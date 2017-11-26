@@ -19,6 +19,7 @@
         android:id="@+id/newsItemAuthor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:textSize="16sp"
         android:textColor="@color/newsItemAuthor"
         tools:text="Author" />
@@ -27,6 +28,7 @@
         android:id="@+id/newsItemDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:textSize="16sp"
         android:textColor="@color/newsItemDate"
         tools:text="Date" />

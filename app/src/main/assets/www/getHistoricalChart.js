@@ -2,14 +2,15 @@ function getHistoricalChart(symbol) {
     historicalChartSymbol = symbol;
     var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getHistoricalChart" ;
     $.ajax({
-       url: requestLink,
-       data:{
+        url: requestLink,
+        data:{
            'symbol': symbol,
-       },
-       method: 'GET',
-       success: function(result) {
-           getHistoricalChartData(result);
-       }
+        },
+        method: 'GET',
+        success: function(result) {
+            Android.getHistoricalChart();
+            getHistoricalChartData(result);
+        }
     });
 }
 
@@ -27,7 +28,6 @@ function getHistoricalChartData(jsonObj) {
         arrayHistoricalChart.push(arr);
     }
     arrayHistoricalChart.reverse();
-
     drawHistoricalChart();
 }
 
@@ -35,7 +35,7 @@ function drawHistoricalChart() {
     var historicalChart = new Highcharts.stockChart({
         chart: {
             renderTo: 'historicalChartContainer',
-            height: (4 / 3 * 100) + '%'
+            height: (5 / 4 * 100) + '%'
         },
         rangeSelector: { selected: 1 },
         title: { text: historicalChartSymbol + ' Stock Price' },

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,15 +50,11 @@ public class PlaceholderFragment extends Fragment {
         return fragment;
     }
 
-    //ListView stockListView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
-        Toast.makeText(getActivity(), "" + getArguments().getInt(ARG_SECTION_NUMBER), Toast.LENGTH_LONG).show();
-
         View rootView;
         switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
             case 0:
@@ -79,7 +76,10 @@ public class PlaceholderFragment extends Fragment {
         return rootView;
     }
 
-    // Global Variables //
+
+    /**
+     *      Variables
+     */
     boolean addToFavList = false;
     boolean activeChange = false;
 
@@ -89,8 +89,15 @@ public class PlaceholderFragment extends Fragment {
 
     String[] headers = {"Stock Symbol", "Last Price", "Change", "Timestamp", "Open", "Close", "Day's Range", "Volume"};
     String[] dataFromJS;
+    String[] titleFromJS;
+    String[] authorFromJS;
+    String[] dateFromJS;
+    String[] linkFromJS;
 
-    // JavaScript Interface
+
+    /**
+     *      JavaScript Interface
+     */
     private class WebAppInterface {
         Context mContext;
 
@@ -101,29 +108,98 @@ public class PlaceholderFragment extends Fragment {
         @JavascriptInterface
         public void getStockDetailsData(String[] data) {
             dataFromJS = data;
-            updateStockDetailsListView();
+            updateStockDetailsView();
         }
 
+        @JavascriptInterface
+        public void getHistoricalChart() {
+            updateHistoricalView();
+        }
+
+        @JavascriptInterface
+        public void getNewsFeed(String[] title, String[] author, String[] date, String[] link) {
+            titleFromJS = title;
+            authorFromJS = author;
+            dateFromJS = date;
+            linkFromJS = link;
+            updateNewsFeed();
+        }
     }
 
-    public void updateStockDetailsListView() {
+
+    /**
+     *      Update UI
+     */
+    public void updateStockDetailsView() {
+
         final ListView stockListView = (ListView) getActivity().findViewById(R.id.stockListView);
+        final WebView webView = (WebView) getActivity().findViewById(R.id.detailsChartWebView);
+        final ProgressBar progressCurrentList = (ProgressBar) getActivity().findViewById(R.id.progressCurrentList);
+        final ProgressBar progressCurrentChart = (ProgressBar) getActivity().findViewById(R.id.progressCurrentChart);
 
         // Set Header & Data
         final ArrayList<String> headerInListView = new ArrayList<>();
-        headerInListView.addAll(Arrays.asList(headers).subList(0, 8));
         final ArrayList<String> dataInListView = new ArrayList<>();
+        headerInListView.addAll(Arrays.asList(headers).subList(0, 8));
         dataInListView.addAll(Arrays.asList(dataFromJS).subList(0, 8));
 
-        // Update List View
+        // Update UI
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                stockListView.setVisibility(View.VISIBLE);
                 stockListView.setAdapter(new StockDetailsListViewAdapter(getActivity(), headerInListView, dataInListView));
+                webView.setVisibility(View.VISIBLE);
+                progressCurrentList.setVisibility(View.GONE);
+                progressCurrentChart.setVisibility(View.GONE);
             }
         });
     }
 
+    public void updateHistoricalView() {
+
+        final WebView webView = (WebView) getActivity().findViewById(R.id.historicalChartWebView);
+        final ProgressBar progressHistorical = (ProgressBar) getActivity().findViewById(R.id.progressHistoricalChart);
+
+        //Update UI
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                webView.setVisibility(View.VISIBLE);
+                progressHistorical.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void updateNewsFeed() {
+
+        final ListView newsListView = (ListView) getActivity().findViewById(R.id.newsListView);
+        final ProgressBar progressNews = (ProgressBar) getActivity().findViewById(R.id.progressNews);
+
+        // Set Title & Author & Date
+        final ArrayList<String> titleInListView = new ArrayList<>();
+        final ArrayList<String> authorInListView = new ArrayList<>();
+        final ArrayList<String> dateInListView = new ArrayList<>();
+        final ArrayList<String> linkInListView = new ArrayList<>();
+        titleInListView.addAll(Arrays.asList(titleFromJS).subList(0, titleFromJS.length));
+        authorInListView.addAll(Arrays.asList(authorFromJS).subList(0, authorFromJS.length));
+        dateInListView.addAll(Arrays.asList(dateFromJS).subList(0, dateFromJS.length));
+
+        // Update UI
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                newsListView.setVisibility(View.VISIBLE);
+                newsListView.setAdapter(new NewsListViewAdapter(getActivity(), titleInListView, authorInListView, dateInListView));
+                progressNews.setVisibility(View.GONE);
+            }
+        });
+    }
+
+
+    /**
+     *      Current Page
+     */
     // CURRENT PAGE //
     public View setCurrentView(View currentView) {
 
@@ -134,7 +210,6 @@ public class PlaceholderFragment extends Fragment {
         if(!activeChange) {
             ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#868686"));
         }
-
 
         // Favourite List Button
         final ImageView imageFav = (ImageView) currentView.findViewById(R.id.imageFavourite);
@@ -151,19 +226,9 @@ public class PlaceholderFragment extends Fragment {
             }
         });
 
-
-        // Stock Details List View
+        // Set Stock Details List View Invisible
         ListView stockListView = (ListView) currentView.findViewById(R.id.stockListView);
-        // Set Header & Data
-        ArrayList<String> headerInListView = new ArrayList<>();
-        headerInListView.addAll(Arrays.asList(headers).subList(0, 8));
-        ArrayList<String> dataInListView = new ArrayList<>();
-        for(int i = 0; i < 8; i++) {
-            dataInListView.add("");
-        }
-        // Update List View
-        stockListView.setAdapter(new StockDetailsListViewAdapter(getActivity(), headerInListView, dataInListView));
-
+        stockListView.setVisibility(View.GONE);
 
         // Show Details Chart Using Web View
         final WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
@@ -177,10 +242,12 @@ public class PlaceholderFragment extends Fragment {
             public void onPageFinished (WebView view, String url) {
                 symbol = getActivity().getIntent().getStringExtra("symbolTitle");
                 webView.loadUrl("javascript:getPrice('" + symbol + "')");
-
+                webView.loadUrl("javascript:getNewsFeed('" + symbol + "')");
             }
         });
 
+        // Set Web View Invisible
+        webView.setVisibility(View.GONE);
 
         // Indicator Spinner
         final Spinner spinner = (Spinner) currentView.findViewById(R.id.indicatorSpinner);
@@ -190,7 +257,6 @@ public class PlaceholderFragment extends Fragment {
         spinner.setAdapter(adapter);
         // Spinner Selected Listener
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
-
 
         // Change Button
         final TextView change = (TextView) currentView.findViewById(R.id.change);
@@ -233,16 +299,12 @@ public class PlaceholderFragment extends Fragment {
                             webView.loadUrl("javascript:getMACD('" + symbol + "')");
                             break;
                     }
-
-
-
                 }
             }
         });
 
         return currentView;
     }
-
 
     // Spinner Item Selected Listener
     public class CustomOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
@@ -258,13 +320,16 @@ public class PlaceholderFragment extends Fragment {
         }
     }
 
-
+    /**
+     *      Historical Page
+     */
     // HISTORICAL PAGE //
     public View setHistoricalView(View historicalView) {
 
         // Show Details Chart Using Web View
         final WebView webView = (WebView) historicalView.findViewById(R.id.historicalChartWebView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
 
         String url = "file:///android_asset/www/getHistoricalChart.html";
         webView.loadUrl(url);
@@ -277,31 +342,21 @@ public class PlaceholderFragment extends Fragment {
             }
         });
 
+        // Set Web View Invisible
+        webView.setVisibility(View.GONE);
+
         return historicalView;
     }
 
-
+    /**
+     *      News Page
+     */
     // NEWS PAGE //
     public View setNewsView(View newsView) {
 
         // News List View
         ListView newsListView = (ListView) newsView.findViewById(R.id.newsListView);
-
-        // Set Title & Author & Date
-        ArrayList<String> titleInListView  = new ArrayList<>();
-
-        ArrayList<String> authorInListView = new ArrayList<>();
-
-        ArrayList<String> dateInListView = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            titleInListView.add("Title");
-            authorInListView.add("Author");
-            dateInListView.add("Date");
-        }
-
-        // Update List View
-        newsListView.setAdapter(new NewsListViewAdapter(getActivity(), titleInListView, authorInListView, dateInListView));
+        newsListView.setVisibility(View.GONE);
 
         return newsView;
     }

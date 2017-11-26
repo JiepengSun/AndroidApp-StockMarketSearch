@@ -387,6 +387,7 @@ function drawBBANDSChart() {
     drawChart();
 }
 
+// Get MACD //
 function getMACD() {
     var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getMACD" ;
     $.ajax({
@@ -433,6 +434,55 @@ function drawMACDChart() {
     drawChart();
 }
 
+// Get News Feed //
+function getNewsFeed(symbol) {
+
+    //sendNewsFeedToActivity();
+    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getNewsFeed" ;
+    $.ajax({
+       url: requestLink,
+       data:{
+           'symbol': symbol,
+       },
+       method: 'GET',
+       success: function(result) {
+           getNewsFeedData(result);
+           sendNewsFeedToActivity();
+       }
+    });
+}
+
+function getNewsFeedData(xml) {
+    // Parse XML
+    xmlDoc = (new DOMParser()).parseFromString(xml, 'text/xml');
+
+    // Get Data
+    var numOfNews = 0;
+    var numOfLoop = 0;
+    while(numOfNews < 5) {
+        item = xmlDoc.getElementsByTagName("item")[numOfLoop];
+        if(item == null) {
+            break;
+        }
+        if(!item.getElementsByTagName("link")[0].firstChild.data.includes("article")) {
+            numOfLoop++;
+            continue;
+        }
+        newsFeedTitle.push(item.getElementsByTagName("title")[0].firstChild.data);
+        newsFeedLink.push(item.getElementsByTagName("link")[0].firstChild.data);
+        date = item.getElementsByTagName("pubDate")[0].firstChild.data;
+        index = date.indexOf("-");
+        date = date.substr(0, index - 1);
+        newsFeedDate.push(date);
+        newsFeedAuthor.push(item.getElementsByTagName("author_name")[0].firstChild.data);
+        numOfNews++;
+        numOfLoop++;
+    }
+}
+
+function sendNewsFeedToActivity() {
+    Android.getNewsFeed(newsFeedTitle, newsFeedAuthor, newsFeedDate, newsFeedLink);
+}
 
 
 
