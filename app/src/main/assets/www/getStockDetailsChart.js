@@ -73,6 +73,7 @@ function getPriceData(jsonObj) {
 
 	drawPriceChart();
 	sendDataToActivity();
+	Android.priceIsReady();
 }
 
 function drawPriceChart() {
@@ -103,13 +104,12 @@ function sendDataToActivity() {
     stockDetailsData.push(close);
     stockDetailsData.push(low + " - " + high);
     stockDetailsData.push(volume);
-
-    Android.getStockDetailsData(stockDetailsData);
+    Android.getStockDetailsData(stockDetailsData, change, changePercent);
     //Android.showToast("Data from JS");
 }
 
 // Get SMA //
-function getSMA(symbol) {
+function getSMA() {
     var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getSMA" ;
     $.ajax({
         url: requestLink,
@@ -135,6 +135,7 @@ function getSMAData(jsonObj) {
     arraySMAData.reverse();
     SMA_title = jsonObj["Meta Data"]["2: Indicator"];
     drawSMAChart();
+    Android.smaIsReady();
 }
 
 function drawSMAChart() {
@@ -173,6 +174,7 @@ function getEMAData(jsonObj) {
     arrayEMAData.reverse();
     EMA_title = jsonObj["Meta Data"]["2: Indicator"];
     drawEMAChart();
+    Android.emaIsReady();
 }
 
 function drawEMAChart() {
@@ -213,6 +215,7 @@ function getSTOCHData(jsonObj) {
     arraySTOCHSlowK.reverse();
     STOCH_title = jsonObj["Meta Data"]["2: Indicator"];
     drawSTOCHChart();
+    Android.stochIsReady();
 }
 
 function drawSTOCHChart() {
@@ -254,6 +257,7 @@ var keys = Object.keys(jsonObj["Technical Analysis: RSI"]);
     arrayRSIData.reverse();
     RSI_title = jsonObj["Meta Data"]["2: Indicator"];
     drawRSIChart();
+    Android.rsiIsReady();
 }
 
 function drawRSIChart() {
@@ -292,6 +296,7 @@ function getADXData(jsonObj) {
     arrayADXData.reverse();
     ADX_title = jsonObj["Meta Data"]["2: Indicator"];
     drawADXChart();
+    Android.adxIsReady();
 }
 
 function drawADXChart() {
@@ -330,6 +335,7 @@ function getCCIData(jsonObj) {
     arrayCCIData.reverse();
     CCI_title = jsonObj["Meta Data"]["2: Indicator"];
     drawCCIChart();
+    Android.cciIsReady();
 }
 
 function drawCCIChart() {
@@ -372,6 +378,7 @@ function getBBANDSData(jsonObj) {
     arrayBBANDSRealUpperBand.reverse();
     BBANDS_title = jsonObj["Meta Data"]["2: Indicator"];
     drawBBANDSChart();
+    Android.bbandsIsReady();
 }
 
 function drawBBANDSChart() {
@@ -419,6 +426,7 @@ function getMACDData(jsonObj) {
     arrayMACDSignal.reverse();
     MACD_title = jsonObj["Meta Data"]["2: Indicator"];
     drawMACDChart();
+    Android.macdIsReady();
 }
 
 function drawMACDChart() {

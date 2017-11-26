@@ -96,6 +96,19 @@ public class PlaceholderFragment extends Fragment {
     String[] dateFromJS;
     String[] linkFromJS;
 
+    String priceInFavList;
+    String changeInFavList;
+    String percentInFavList;
+
+    boolean isReadyPrice = false;
+    boolean isReadySMA = false;
+    boolean isReadyEMA = false;
+    boolean isReadySTOCH = false;
+    boolean isReadyRSI = false;
+    boolean isReadyADX = false;
+    boolean isReadyCCI = false;
+    boolean isReadyBBANDS = false;
+    boolean isReadyMACD = false;
 
     /**
      *      JavaScript Interface
@@ -108,8 +121,11 @@ public class PlaceholderFragment extends Fragment {
         }
 
         @JavascriptInterface
-        public void getStockDetailsData(String[] data) {
+        public void getStockDetailsData(String[] data, String change, String percent) {
             dataFromJS = data;
+            priceInFavList = dataFromJS[1];
+            changeInFavList = change;
+            percentInFavList = percent;
             updateStockDetailsView();
         }
 
@@ -126,6 +142,52 @@ public class PlaceholderFragment extends Fragment {
             linkFromJS = link;
             updateNewsFeed();
         }
+
+        @JavascriptInterface
+        public void priceIsReady() {
+            isReadyPrice = true;
+        }
+
+        @JavascriptInterface
+        public void smaIsReady() {
+            isReadySMA = true;
+        }
+
+        @JavascriptInterface
+        public void emaIsReady() {
+            isReadyEMA = true;
+        }
+
+        @JavascriptInterface
+        public void stochIsReady() {
+            isReadySTOCH = true;
+        }
+
+        @JavascriptInterface
+        public void rsiIsReady() {
+            isReadyRSI = true;
+        }
+
+        @JavascriptInterface
+        public void adxIsReady() {
+            isReadyADX = true;
+        }
+
+        @JavascriptInterface
+        public void cciIsReady() {
+            isReadyCCI = true;
+        }
+
+        @JavascriptInterface
+        public void bbandsIsReady() {
+            isReadyBBANDS = true;
+        }
+
+        @JavascriptInterface
+        public void macdIsReady() {
+            isReadyMACD = true;
+        }
+
     }
 
 
@@ -145,6 +207,13 @@ public class PlaceholderFragment extends Fragment {
         headerInListView.addAll(Arrays.asList(headers).subList(0, 8));
         dataInListView.addAll(Arrays.asList(dataFromJS).subList(0, 8));
 
+        // Active Spinner
+        final Spinner spinner = (Spinner) getActivity().findViewById(R.id.indicatorSpinner);
+
+        // Active Buttons
+        final ImageView facebook = (ImageView) getActivity().findViewById(R.id.imageFacebook);
+        final ImageView favourite = (ImageView) getActivity().findViewById(R.id.imageFavourite);
+
         // Update UI
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -154,6 +223,9 @@ public class PlaceholderFragment extends Fragment {
                 webView.setVisibility(View.VISIBLE);
                 progressCurrentList.setVisibility(View.GONE);
                 progressCurrentChart.setVisibility(View.GONE);
+                spinner.setEnabled(true);
+                facebook.getDrawable().setAlpha(255);
+                favourite.getDrawable().setAlpha(255);
             }
         });
     }
@@ -215,12 +287,16 @@ public class PlaceholderFragment extends Fragment {
     // CURRENT PAGE //
     public View setCurrentView(View currentView) {
 
+        // Disable Button When Loading
+        ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
+        ((ImageView) currentView.findViewById(R.id.imageFavourite)).getDrawable().setAlpha(64);
+
         // Init Current View
         if(addToFavList) {
             ((ImageView) currentView.findViewById(R.id.imageFavourite)).setImageResource(R.drawable.ic_star_black_24px);
         }
         if(!activeChange) {
-            ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#868686"));
+            ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#a8a8a8"));
         }
 
         // Favourite List Button
@@ -228,6 +304,9 @@ public class PlaceholderFragment extends Fragment {
         imageFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isReadyPrice) {
+                    return;
+                }
                 if(!addToFavList) {
                     imageFav.setImageResource(R.drawable.ic_star_black_24px);
                     addToFavList = true;
@@ -269,6 +348,7 @@ public class PlaceholderFragment extends Fragment {
         spinner.setAdapter(adapter);
         // Spinner Selected Listener
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+        spinner.setEnabled(false);
 
         // Change Button
         final TextView change = (TextView) currentView.findViewById(R.id.change);
@@ -277,40 +357,42 @@ public class PlaceholderFragment extends Fragment {
             public void onClick(View view) {
                 if(activeChange) {
                     // Set Color
-                    change.setTextColor(Color.parseColor("#868686"));
+                    change.setTextColor(Color.parseColor("#a8a8a8"));
                     activeChange = false;
 
                     // Call JavaScript Functions
                     String spinnerText = spinner.getSelectedItem().toString();
+                    String url = "javascript:getPrice('" + symbol + "')";
                     switch (spinnerText) {
                         case "Price":
-                            webView.loadUrl("javascript:getPrice('" + symbol + "')");
+                            url = !isReadyPrice ? "javascript:getPrice('" + symbol + "')" : "javascript:drawPriceChart()";
                             break;
                         case "SMA":
-                            webView.loadUrl("javascript:getSMA('" + symbol + "')");
+                            url = !isReadySMA ? "javascript:getSMA()" : "javascript:drawSMAChart()";
                             break;
                         case "EMA":
-                            webView.loadUrl("javascript:getEMA('" + symbol + "')");
+                            url = !isReadyEMA ? "javascript:getEMA()" : "javascript:drawEMAChart()";
                             break;
                         case "STOCH":
-                            webView.loadUrl("javascript:getSTOCH('" + symbol + "')");
+                            url = !isReadySTOCH ? "javascript:getSTOCH()" : "javascript:drawSTOCHChart()";
                             break;
                         case "RSI":
-                            webView.loadUrl("javascript:getRSI('" + symbol + "')");
+                            url = !isReadyRSI ? "javascript:getRSI()" : "javascript:drawRSIChart()";
                             break;
                         case "ADX":
-                            webView.loadUrl("javascript:getADX('" + symbol + "')");
+                            url = !isReadyADX ? "javascript:getADX()" : "javascript:drawADXChart()";
                             break;
                         case "CCI":
-                            webView.loadUrl("javascript:getCCI('" + symbol + "')");
+                            url = !isReadyCCI ? "javascript:getCCI()" : "javascript:drawCCIChart()";
                             break;
                         case "BBANDS":
-                            webView.loadUrl("javascript:getBBANDS('" + symbol + "')");
+                            url = !isReadyBBANDS ? "javascript:getBBANDS()" : "javascript:drawBBANDSChart()";
                             break;
                         case "MACD":
-                            webView.loadUrl("javascript:getMACD('" + symbol + "')");
+                            url = !isReadyMACD ? "javascript:getMACD()" : "javascript:drawMACDChart()";
                             break;
                     }
+                    webView.loadUrl(url);
                 }
             }
         });

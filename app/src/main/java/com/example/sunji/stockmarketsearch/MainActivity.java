@@ -1,13 +1,22 @@
 package com.example.sunji.stockmarketsearch;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,5 +57,52 @@ public class MainActivity extends AppCompatActivity {
                  ((TextView) findViewById(R.id.stockQuoteInput)).setText(newString);
              }
          });
+
+        // Set Spinner
+        Spinner sortSpinner = (Spinner) findViewById(R.id.sortSpinner);
+        ArrayAdapter<CharSequence> sortSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sortSpinner, android.R.layout.simple_spinner_item);
+        sortSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(sortSpinnerAdapter);
+        sortSpinner.setOnItemSelectedListener(new MainActivity.sortSpinnerOnItemSelectedListener());
+
+        Spinner orderSpinner = (Spinner) findViewById(R.id.orderSpinner);
+        ArrayAdapter<CharSequence> orderSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.orderSpinner, android.R.layout.simple_spinner_item);
+        orderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        orderSpinner.setAdapter(orderSpinnerAdapter);
+        orderSpinner.setOnItemSelectedListener(new MainActivity.orderSpinnerOnItemSelectedListener());
+
+        // List View Fake Data
+        ArrayList<String> symbolInListView = new ArrayList<>();
+        ArrayList<String> priceInListView = new ArrayList<>();
+        ArrayList<String> changeInListView = new ArrayList<>();
+
+        symbolInListView.add("AAA");
+        priceInListView.add("100");
+        changeInListView.add("123123");
+
+        // Favourite List
+        ListView favListView = (ListView) findViewById(R.id.favListView);
+        favListView.setAdapter(new FavouriteListViewAdapter(this, symbolInListView, priceInListView, changeInListView));
+    }
+
+    /**
+     *      Spinner Listener
+     */
+    // Sort
+    public class sortSpinnerOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+        }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    }
+
+    // Order
+    public class orderSpinnerOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+        }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,6 +44,14 @@ public class StockDetailsListViewAdapter extends BaseAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.stock_list_view_item, null);
         ((TextView) view.findViewById(R.id.stockItemHeader)).setText(header.get(position));
         ((TextView) view.findViewById(R.id.stockItemContent)).setText(data.get(position));
+        //((ImageView) view.findViewById(R.id.stockItemArrow)).setImageResource(R.mipmap.down_icon);
+        if(position == 2) {
+            if(!data.get(position).contains("-")) {
+                ((ImageView) view.findViewById(R.id.stockItemArrow)).setImageResource(R.mipmap.up_icon);
+            } else {
+                ((ImageView) view.findViewById(R.id.stockItemArrow)).setImageResource(R.mipmap.down_icon);
+            }
+        }
         return view;
     }
 }

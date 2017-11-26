@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/favBackgroundColor">
+
+    <TextView
+        android:id="@+id/favSymbol"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="start"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:textColor="@color/favSymbol"
+        android:textSize="16sp"
+        tools:text="Symbol" />
+
+    <TextView
+        android:id="@+id/favPrice"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="start"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:textColor="@color/stockItemContent"
+        android:textSize="16sp"
+        tools:text="100" />
+    <TextView
+        android:id="@+id/favChange"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="end"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:textColor="@color/stockItemContent"
+        android:textSize="16sp"
+        tools:text="10 (10%)" />
+
+</LinearLayout>

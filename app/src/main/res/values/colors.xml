@@ -19,8 +19,13 @@
     <color name="stockListViewDivider">#ffeeeeee</color>
     <color name="indicators">#000000</color>
     <color name="change">#000000</color>
-    <color name="webViewTestColor">#868686</color>
+    <color name="webViewTestColor">#a8a8a8</color>
     <color name="newsItemTitle">#000000</color>
     <color name="newsItemAuthor">#868686</color>
     <color name="newsItemDate">#868686</color>
+    <color name="favourites">#FFFFFF</color>
+    <color name="favSymbol">#000000</color>
+    <color name="favBackgroundColor">#FFFFFF</color>
+    <color name="sortBy">#000000</color>
+    <color name="order">#000000</color>
 </resources>
