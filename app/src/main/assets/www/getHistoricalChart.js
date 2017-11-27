@@ -8,13 +8,17 @@ function getHistoricalChart(symbol) {
         },
         method: 'GET',
         success: function(result) {
-            Android.getHistoricalChart();
             getHistoricalChartData(result);
         }
     });
 }
 
 function getHistoricalChartData(jsonObj) {
+
+    var keys = Object.keys(jsonObj);
+    if(keys[0] == "Error Message") {
+        return;
+    }
 
     var keys = Object.keys(jsonObj["Time Series (Daily)"]);
     var values = Object.values(jsonObj["Time Series (Daily)"]);
@@ -28,6 +32,7 @@ function getHistoricalChartData(jsonObj) {
         arrayHistoricalChart.push(arr);
     }
     arrayHistoricalChart.reverse();
+    Android.getHistoricalChart();
     drawHistoricalChart();
 }
 

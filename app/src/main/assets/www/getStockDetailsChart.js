@@ -15,6 +15,12 @@ function getPrice(symbol) {
 
 function getPriceData(jsonObj) {
 
+    var keys = Object.keys(jsonObj);
+    if(keys[0] == "Error Message") {
+        Android.showErrorMessage();
+        return;
+    }
+
     var keys = Object.keys(jsonObj["Time Series (Daily)"]);
     var values = Object.values(jsonObj["Time Series (Daily)"]);
 
@@ -74,6 +80,7 @@ function getPriceData(jsonObj) {
 	drawPriceChart();
 	sendDataToActivity();
 	Android.priceIsReady();
+	getNewsFeed(symbol);
 }
 
 function drawPriceChart() {

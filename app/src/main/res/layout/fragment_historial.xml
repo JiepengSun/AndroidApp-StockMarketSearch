@@ -22,4 +22,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
+    <TextView
+        android:id="@+id/errMsgHistorical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/failToLoadData"
+        android:textSize="24sp"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"/>
+
 </LinearLayout>

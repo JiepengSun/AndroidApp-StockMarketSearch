@@ -158,13 +158,10 @@ public class MainActivity extends AppCompatActivity {
     // Order
     public class orderSpinnerOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-
-            if(isDefault) {
-                return;
-            }
-            //Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
             orderSelected = parent.getItemAtPosition(pos).toString().equals("Ascending") ? 1 : -1;
-            sortList(typeSelected, orderSelected);
+            if(!isDefault) {
+                sortList(typeSelected, orderSelected);
+            }
         }
         public void onNothingSelected(AdapterView<?> parent) {
         }
@@ -241,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
                     changeInListView.add(favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).change + " (" + favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).changePercent + "%) ");
                 }
                 break;
-
         }
 
         runOnUiThread(new Runnable() {

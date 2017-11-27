@@ -16,6 +16,7 @@
     <string name="autoRefresh">AutoRefresh</string>
     <string name="sortBy">Sort By</string>
     <string name="order">Order</string>
+    <string name="failToLoadData">Failed To Load Data</string>
     <string-array name="indicatorSpinner">
         <item>Price</item>
         <item>SMA</item>

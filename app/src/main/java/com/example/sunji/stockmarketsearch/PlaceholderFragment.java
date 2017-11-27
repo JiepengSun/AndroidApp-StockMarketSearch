@@ -194,6 +194,30 @@ public class PlaceholderFragment extends Fragment {
             isReadyMACD = true;
         }
 
+        @JavascriptInterface
+        public void showErrorMessage() {
+            displayErrorMessage();
+        }
+
+    }
+
+    public void displayErrorMessage() {
+        //Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((ProgressBar) getActivity().findViewById(R.id.progressCurrentList)).setVisibility(View.GONE);
+                ((ProgressBar) getActivity().findViewById(R.id.progressCurrentChart)).setVisibility(View.GONE);
+                ((ProgressBar) getActivity().findViewById(R.id.progressHistoricalChart)).setVisibility(View.GONE);
+                ((ProgressBar) getActivity().findViewById(R.id.progressNews)).setVisibility(View.GONE);
+                ((WebView) getActivity().findViewById(R.id.detailsChartWebView)).setVisibility(View.GONE);
+                ((WebView) getActivity().findViewById(R.id.historicalChartWebView)).setVisibility(View.GONE);
+                ((TextView) getActivity().findViewById(R.id.errMsgDetails)).setVisibility(View.VISIBLE);
+                ((TextView) getActivity().findViewById(R.id.errMsgChart)).setVisibility(View.VISIBLE);
+                ((TextView) getActivity().findViewById(R.id.errMsgHistorical)).setVisibility(View.VISIBLE);
+                ((TextView) getActivity().findViewById(R.id.errMsgNews)).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
 
@@ -319,6 +343,10 @@ public class PlaceholderFragment extends Fragment {
         ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
         ((ImageView) currentView.findViewById(R.id.imageFavourite)).getDrawable().setAlpha(64);
 
+        // Hide Error Message
+        ((TextView) currentView.findViewById(R.id.errMsgDetails)).setVisibility(View.GONE);
+        ((TextView) currentView.findViewById(R.id.errMsgChart)).setVisibility(View.GONE);
+
         // Favourite List Button
         final ImageView imageFav = (ImageView) currentView.findViewById(R.id.imageFavourite);
         imageFav.setOnClickListener(new View.OnClickListener() {
@@ -359,8 +387,7 @@ public class PlaceholderFragment extends Fragment {
         imageFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Clear the SharedPreference", Toast.LENGTH_LONG).show();
-                SharedPreferences.clear(getContext());
+
             }
         });
 
@@ -379,7 +406,7 @@ public class PlaceholderFragment extends Fragment {
             public void onPageFinished (WebView view, String url) {
                 symbol = getActivity().getIntent().getStringExtra("symbolTitle");
                 webView.loadUrl("javascript:getPrice('" + symbol + "')");
-                webView.loadUrl("javascript:getNewsFeed('" + symbol + "')");
+                //webView.loadUrl("javascript:getNewsFeed('" + symbol + "')");
             }
         });
 
@@ -485,6 +512,9 @@ public class PlaceholderFragment extends Fragment {
         // Set Web View Invisible
         webView.setVisibility(View.GONE);
 
+        // Hide Error Message
+        ((TextView) historicalView.findViewById(R.id.errMsgHistorical)).setVisibility(View.GONE);
+
         return historicalView;
     }
 
@@ -497,6 +527,9 @@ public class PlaceholderFragment extends Fragment {
         // News List View
         ListView newsListView = (ListView) newsView.findViewById(R.id.newsListView);
         newsListView.setVisibility(View.GONE);
+
+        // Hide Error Message
+        ((TextView) newsView.findViewById(R.id.errMsgNews)).setVisibility(View.GONE);
 
         return newsView;
     }
