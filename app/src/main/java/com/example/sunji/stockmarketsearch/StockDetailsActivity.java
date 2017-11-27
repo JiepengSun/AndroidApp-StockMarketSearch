@@ -22,6 +22,12 @@ import android.widget.Toast;
 
 public class StockDetailsActivity extends AppCompatActivity {
 
+    public static String symbol;
+
+    public static String getSymbol() {
+        return symbol;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +36,7 @@ public class StockDetailsActivity extends AppCompatActivity {
         // Set Action Bar Title
         String actionbarTitle = getIntent().getStringExtra("symbolTitle");
         setTitle(actionbarTitle);
+        symbol = getIntent().getStringExtra("symbolTitle");
 
         // Create the adapter that will return a fragment for each of the three primary sections of the activity.
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

@@ -41,15 +41,10 @@ public class MainActivity extends AppCompatActivity {
         // Load Data //
         List<FavouriteList> savedFavouriteLists = SharedPreferences.read(this, SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
         favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
-        Toast.makeText(MainActivity.this, "Favourite list size is: " + favouriteLists.size(), Toast.LENGTH_LONG).show();
 
-        // List View Data
         final ArrayList<String> symbolInListView = new ArrayList<>();
         final ArrayList<String> priceInListView = new ArrayList<>();
         final ArrayList<String> changeInListView = new ArrayList<>();
-
-        // Favourite List
-        final ListView favListView = (ListView) findViewById(R.id.favListView);
 
         for(int i = 0; i < favouriteLists.size(); i++) {
             symbolInListView.add(favouriteLists.get(i).symbol);
@@ -57,31 +52,20 @@ public class MainActivity extends AppCompatActivity {
             changeInListView.add(favouriteLists.get(i).change + " (" + favouriteLists.get(i).changePercent + "%) ");
         }
 
-        //Toast.makeText(MainActivity.this, "Favourite list size is: " + symbolInListView.get(1), Toast.LENGTH_LONG).show();
-
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                favListView.setAdapter(new FavouriteListViewAdapter(getBaseContext(), symbolInListView, priceInListView, changeInListView));
-//            }
-//        });
+        // Favourite List
+        final ListView favListView = (ListView) findViewById(R.id.favListView);
         favListView.setAdapter(new FavouriteListViewAdapter(this, symbolInListView, priceInListView, changeInListView));
-//        symbolInListView.add("AAA");
-//        priceInListView.add("100");
-//        changeInListView.add("123123");
 
-
-
-
-
-
-
-
-
-
-
-
-
+        // Click Event
+        favListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //Toast.makeText(MainActivity.this, "Click: " + position, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MainActivity.this, StockDetailsActivity.class);
+                intent.putExtra("symbolTitle", favouriteLists.get(position).symbol);
+                startActivityForResult(intent, REQ_CODE_STOCK_DETAILS_ACTIVITY);
+            }
+        });
 
 
         ///////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 package com.example.sunji.stockmarketsearch;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,12 @@ public class FavouriteListViewAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.favSymbol)).setText(symbol.get(position));
         ((TextView) view.findViewById(R.id.favPrice)).setText(price.get(position));
         ((TextView) view.findViewById(R.id.favChange)).setText(change.get(position));
+        if(change.get(position).contains("-")) {
+            ((TextView) view.findViewById(R.id.favChange)).setTextColor(Color.parseColor("#b60006"));
+        } else {
+            ((TextView) view.findViewById(R.id.favChange)).setTextColor(Color.parseColor("#1e8000"));
+        }
+
         return view;
     }
 }

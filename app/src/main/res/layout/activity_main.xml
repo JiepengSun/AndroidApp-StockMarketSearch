@@ -141,7 +141,8 @@
         android:id="@+id/favListView"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        android:divider="@color/divider">
+        android:divider="@color/divider"
+        android:dividerHeight="1dp">
     </ListView>
 
 </LinearLayout>

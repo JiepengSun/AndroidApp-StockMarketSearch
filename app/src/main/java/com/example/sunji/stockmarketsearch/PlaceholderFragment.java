@@ -30,7 +30,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -87,7 +89,6 @@ public class PlaceholderFragment extends Fragment {
     /**
      *      Variables
      */
-    boolean addToFavList = false;
     boolean activeChange = false;
 
     String prevIndicator = "Price";
@@ -295,77 +296,61 @@ public class PlaceholderFragment extends Fragment {
     // CURRENT PAGE //
     public View setCurrentView(View currentView) {
 
+        symbol = StockDetailsActivity.getSymbol();
+
+        // Load Shared Preferences
         List<FavouriteList> savedFavouriteLists = SharedPreferences.read(getContext(), SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
-        if(savedFavouriteLists == null) {
-            Toast.makeText(getActivity(), "NULL", Toast.LENGTH_LONG).show();
-        }
         favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
 
-        // Disable Button When Loading
-        ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
-        ((ImageView) currentView.findViewById(R.id.imageFavourite)).getDrawable().setAlpha(64);
+        final Set<String> favSymbol = new HashSet<String>();
+        for(int i = 0; i < favouriteLists.size(); i++) {
+            favSymbol.add(favouriteLists.get(i).symbol);
+        }
 
         // Init Current View
-        if(addToFavList) {
+        if(favSymbol.contains(symbol)) {
             ((ImageView) currentView.findViewById(R.id.imageFavourite)).setImageResource(R.drawable.ic_star_black_24px);
         }
         if(!activeChange) {
             ((TextView) currentView.findViewById(R.id.change)).setTextColor(Color.parseColor("#a8a8a8"));
         }
 
+        // Disable Button When Loading
+        ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
+        ((ImageView) currentView.findViewById(R.id.imageFavourite)).getDrawable().setAlpha(64);
+
         // Favourite List Button
         final ImageView imageFav = (ImageView) currentView.findViewById(R.id.imageFavourite);
-        //final List<FavouriteList> finalSavedFavouriteLists = savedFavouriteLists;
         imageFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!isReadyPrice) {
                     return;
                 }
-                if(!addToFavList) {
+                if(!favSymbol.contains(symbol)) {
                     imageFav.setImageResource(R.drawable.ic_star_black_24px);
-                    addToFavList = true;
+
+                    // Add to FavList
+                    favSymbol.add(symbol);
+                    FavouriteList currentList = new FavouriteList();
+                    currentList.symbol = symbol;
+                    currentList.price = priceInFavList;
+                    currentList.change = changeInFavList;
+                    currentList.changePercent = percentInFavList;
+                    favouriteLists.add(currentList);
+                    SharedPreferences.save(getContext(), SHARED_PREFERENCE_KEY, favouriteLists);
                 } else {
                     imageFav.setImageResource(R.drawable.ic_star_border_black_24px);
-                    addToFavList = false;
+
+                    // Delete From FavList
+                    favSymbol.remove(symbol);
+                    for(int i = 0; i < favouriteLists.size(); i++) {
+                        if(favouriteLists.get(i).symbol.equals(symbol)) {
+                            favouriteLists.remove(i);
+                            SharedPreferences.save(getContext(), SHARED_PREFERENCE_KEY, favouriteLists);
+                        }
+                    }
                 }
-
-                //////////////////////////////////////////////////////////////////////////////
-
-                FavouriteList currentList = new FavouriteList();
-                currentList.symbol = symbol;
-                currentList.price = priceInFavList;
-                currentList.change = changeInFavList;
-                currentList.changePercent = percentInFavList;
-
-                favouriteLists.add(currentList);
-
-                SharedPreferences.save(getContext(), SHARED_PREFERENCE_KEY, favouriteLists);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                ///////////////////////////////////////////////////////////////////////////////
-
-
-
-
             }
         });
 
