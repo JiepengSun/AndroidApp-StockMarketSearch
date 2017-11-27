@@ -482,7 +482,12 @@ function getNewsFeedData(xml) {
         index = date.indexOf("-");
         date = date.substr(0, index - 1);
         newsFeedDate.push(date);
-        newsFeedAuthor.push(item.getElementsByTagName("author_name")[0].firstChild.data);
+        try {
+            newsFeedAuthor.push(item.getElementsByTagName("author_name")[0].firstChild.data);
+        }
+        catch(e) {
+            newsFeedAuthor.push(item.getElementsByTagName("sa:author_name")[0].firstChild.data);
+        }
         numOfNews++;
         numOfLoop++;
     }

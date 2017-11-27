@@ -14,7 +14,7 @@
     <string name="change">Change</string>
     <string name="favourites">Favourites</string>
     <string name="autoRefresh">AutoRefresh</string>
-    <string name="sortBy">SortBy</string>
+    <string name="sortBy">Sort By</string>
     <string name="order">Order</string>
     <string-array name="indicatorSpinner">
         <item>Price</item>
