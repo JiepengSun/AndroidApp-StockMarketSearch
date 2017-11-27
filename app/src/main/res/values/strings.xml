@@ -17,6 +17,9 @@
     <string name="sortBy">Sort By</string>
     <string name="order">Order</string>
     <string name="failToLoadData">Failed To Load Data</string>
+    <string name="menuTitle">Remove?</string>
+    <string name="menuNo">No</string>
+    <string name="menuYes">Yes</string>
     <string-array name="indicatorSpinner">
         <item>Price</item>
         <item>SMA</item>
