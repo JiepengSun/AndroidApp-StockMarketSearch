@@ -28,4 +28,5 @@
     <color name="favBackgroundColor">#FFFFFF</color>
     <color name="sortBy">#000000</color>
     <color name="order">#000000</color>
+    <color name="divider">#a8a8a8</color>
 </resources>

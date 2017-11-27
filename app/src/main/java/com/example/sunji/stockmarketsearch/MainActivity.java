@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,17 +16,75 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sunji.stockmarketsearch.model.FavouriteList;
+import com.example.sunji.stockmarketsearch.util.SharedPreferences;
+import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_CODE_STOCK_DETAILS_ACTIVITY = 100;
 
+    private List<FavouriteList> favouriteLists;
+    private static final String SHARED_PREFERENCE_KEY = "shared_preference_keys";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // Load Data //
+        List<FavouriteList> savedFavouriteLists = SharedPreferences.read(this, SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
+        favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
+        Toast.makeText(MainActivity.this, "Favourite list size is: " + favouriteLists.size(), Toast.LENGTH_LONG).show();
+
+        // List View Data
+        final ArrayList<String> symbolInListView = new ArrayList<>();
+        final ArrayList<String> priceInListView = new ArrayList<>();
+        final ArrayList<String> changeInListView = new ArrayList<>();
+
+        // Favourite List
+        final ListView favListView = (ListView) findViewById(R.id.favListView);
+
+        for(int i = 0; i < favouriteLists.size(); i++) {
+            symbolInListView.add(favouriteLists.get(i).symbol);
+            priceInListView.add(favouriteLists.get(i).price);
+            changeInListView.add(favouriteLists.get(i).change + " (" + favouriteLists.get(i).changePercent + "%) ");
+        }
+
+        //Toast.makeText(MainActivity.this, "Favourite list size is: " + symbolInListView.get(1), Toast.LENGTH_LONG).show();
+
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                favListView.setAdapter(new FavouriteListViewAdapter(getBaseContext(), symbolInListView, priceInListView, changeInListView));
+//            }
+//        });
+        favListView.setAdapter(new FavouriteListViewAdapter(this, symbolInListView, priceInListView, changeInListView));
+//        symbolInListView.add("AAA");
+//        priceInListView.add("100");
+//        changeInListView.add("123123");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ///////////////////////////////////////////////////////////////////////////////
 
         // Click Get Quote Button
         TextView getQuote = (TextView) findViewById(R.id.getQuote);
@@ -71,18 +130,16 @@ public class MainActivity extends AppCompatActivity {
         orderSpinner.setAdapter(orderSpinnerAdapter);
         orderSpinner.setOnItemSelectedListener(new MainActivity.orderSpinnerOnItemSelectedListener());
 
-        // List View Fake Data
-        ArrayList<String> symbolInListView = new ArrayList<>();
-        ArrayList<String> priceInListView = new ArrayList<>();
-        ArrayList<String> changeInListView = new ArrayList<>();
+//        // List View Fake Data
+//        ArrayList<String> symbolInListView = new ArrayList<>();
+//        ArrayList<String> priceInListView = new ArrayList<>();
+//        ArrayList<String> changeInListView = new ArrayList<>();
+//
+//        symbolInListView.add("AAA");
+//        priceInListView.add("100");
+//        changeInListView.add("123123");
 
-        symbolInListView.add("AAA");
-        priceInListView.add("100");
-        changeInListView.add("123123");
 
-        // Favourite List
-        ListView favListView = (ListView) findViewById(R.id.favListView);
-        favListView.setAdapter(new FavouriteListViewAdapter(this, symbolInListView, priceInListView, changeInListView));
     }
 
     /**
@@ -91,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     // Sort
     public class sortSpinnerOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
         }
         public void onNothingSelected(AdapterView<?> parent) {
         }
@@ -100,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
     // Order
     public class orderSpinnerOnItemSelectedListener extends Activity implements AdapterView.OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
         }
         public void onNothingSelected(AdapterView<?> parent) {
         }

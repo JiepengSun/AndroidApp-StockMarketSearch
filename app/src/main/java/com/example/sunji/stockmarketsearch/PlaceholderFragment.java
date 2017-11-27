@@ -23,9 +23,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sunji.stockmarketsearch.model.FavouriteList;
+import com.example.sunji.stockmarketsearch.util.SharedPreferences;
+import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -284,8 +289,17 @@ public class PlaceholderFragment extends Fragment {
     /**
      *      Current Page
      */
+    private List<FavouriteList> favouriteLists;
+    private static final String SHARED_PREFERENCE_KEY = "shared_preference_keys";
+
     // CURRENT PAGE //
     public View setCurrentView(View currentView) {
+
+        List<FavouriteList> savedFavouriteLists = SharedPreferences.read(getContext(), SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
+        if(savedFavouriteLists == null) {
+            Toast.makeText(getActivity(), "NULL", Toast.LENGTH_LONG).show();
+        }
+        favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
 
         // Disable Button When Loading
         ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
@@ -301,6 +315,7 @@ public class PlaceholderFragment extends Fragment {
 
         // Favourite List Button
         final ImageView imageFav = (ImageView) currentView.findViewById(R.id.imageFavourite);
+        //final List<FavouriteList> finalSavedFavouriteLists = savedFavouriteLists;
         imageFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -314,6 +329,53 @@ public class PlaceholderFragment extends Fragment {
                     imageFav.setImageResource(R.drawable.ic_star_border_black_24px);
                     addToFavList = false;
                 }
+
+                //////////////////////////////////////////////////////////////////////////////
+
+                FavouriteList currentList = new FavouriteList();
+                currentList.symbol = symbol;
+                currentList.price = priceInFavList;
+                currentList.change = changeInFavList;
+                currentList.changePercent = percentInFavList;
+
+                favouriteLists.add(currentList);
+
+                SharedPreferences.save(getContext(), SHARED_PREFERENCE_KEY, favouriteLists);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                ///////////////////////////////////////////////////////////////////////////////
+
+
+
+
+            }
+        });
+
+        // Facebook button
+        ImageView imageFacebook = (ImageView) currentView.findViewById(R.id.imageFacebook);
+        imageFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Clear the SharedPreference", Toast.LENGTH_LONG).show();
+                SharedPreferences.clear(getContext());
             }
         });
 
@@ -325,7 +387,6 @@ public class PlaceholderFragment extends Fragment {
         final WebView webView = (WebView) currentView.findViewById(R.id.detailsChartWebView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
-
         String url = "file:///android_asset/www/getStockDetailsChart.html";
         webView.loadUrl(url);
         webView.setWebViewClient(new WebViewClient() {

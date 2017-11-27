@@ -1,156 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/mainPageBackgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mainPageBackgroundColor"
+    android:padding="16dp"
+    android:orientation="vertical"
     tools:context="com.example.sunji.stockmarketsearch.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:textSize="32sp"
+        android:textColor="@color/stockMarketSearchTitle"
+        android:text="@string/stockMarketSearchTitle"/>
+
+    <EditText
+        android:id="@+id/stockQuoteInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:hint="@string/stockQuoteInputHint" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:orientation="vertical" >
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp" >
 
         <TextView
+            android:id="@+id/getQuote"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="32dp"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:textColor="@color/getQuote"
+            android:text="@string/getQuote" />
+
+        <TextView
+            android:id="@+id/clear"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="32dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textSize="24sp"
+            android:textColor="@color/clear"
+            android:text="@string/clear" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:textColor="@color/favourites"
+            android:text="@string/favourites" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:layout_marginRight="8dp"
+            android:textColor="@color/favourites"
+            android:text="@string/autoRefresh" />
+
+        <Switch
+            android:id="@+id/simpleSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/imageRefresh"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:textSize="32sp"
-            android:textColor="@color/stockMarketSearchTitle"
-            android:text="@string/stockMarketSearchTitle"/>
+            android:src="@drawable/ic_cached_white_24px"/>
 
-        <EditText
-            android:id="@+id/stockQuoteInput"
-            android:layout_width="match_parent"
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/sortBy"
+            android:textColor="@color/sortBy"
+            android:gravity="bottom"/>
+
+        <Spinner
+            android:id="@+id/sortSpinner"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:hint="@string/stockQuoteInputHint" />
+            android:layout_weight="3"
+            android:layout_gravity="start" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/order"
+            android:textColor="@color/order"
+            android:gravity="bottom"/>
+
+        <Spinner
+            android:id="@+id/orderSpinner"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp" >
-
-            <TextView
-                android:id="@+id/getQuote"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="32dp"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textSize="24sp"
-                android:textColor="@color/getQuote"
-                android:text="@string/getQuote" />
-
-            <TextView
-                android:id="@+id/clear"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="32dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:textSize="24sp"
-                android:textColor="@color/clear"
-                android:text="@string/clear" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp" >
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:textSize="24sp"
-                android:textColor="@color/favourites"
-                android:text="@string/favourites" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:layout_gravity="center"
-                android:textSize="16sp"
-                android:layout_marginRight="8dp"
-                android:textColor="@color/favourites"
-                android:text="@string/autoRefresh" />
-
-            <Switch
-                android:id="@+id/simpleSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_gravity="center"/>
-
-            <ImageView
-                android:id="@+id/imageRefresh"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_cached_white_24px"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/sortBy"
-                android:textColor="@color/sortBy"
-                android:gravity="bottom"/>
-
-            <Spinner
-                android:id="@+id/sortSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:layout_gravity="start" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/order"
-                android:textColor="@color/order"
-                android:gravity="bottom"/>
-
-            <Spinner
-                android:id="@+id/orderSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:layout_gravity="bottom" />
-
-        </LinearLayout>
-
-        <ListView
-            android:layout_marginTop="16dp"
-            android:id="@+id/favListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </ListView>
+            android:layout_weight="3"
+            android:layout_gravity="bottom" />
 
     </LinearLayout>
 
 
-</ScrollView>
+    <ListView
+        android:layout_marginTop="16dp"
+        android:id="@+id/favListView"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:divider="@color/divider">
+    </ListView>
+
+</LinearLayout>
