@@ -1,6 +1,7 @@
 package com.example.sunji.stockmarketsearch;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +11,17 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +36,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,13 +45,76 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQ_CODE_STOCK_DETAILS_ACTIVITY = 100;
 
     private List<FavouriteList> favouriteLists;
-    private List<FavouriteList> currentLists;
     private static final String SHARED_PREFERENCE_KEY = "shared_preference_keys";
 
-    private Spinner sortSpinner;
-    private Spinner orderSpinner;
+    private Timer timer;
 
-    private int clickItemPosition;
+    String[] dataRefresh;
+    String priceRefresh;
+    String changeRefresh;
+    String percentRefresh;
+
+    private boolean isAutoRefresh = false;
+
+    private static final String[] COUNTRIES = new String[] {
+            "Belgium", "France", "Italy", "Germany", "Spain"
+    };
+
+    private class jsInterface {
+        Context mContext;
+
+        jsInterface(Context c) {
+            mContext = c;
+        }
+
+        @JavascriptInterface
+        public void getRefreshData(String[] data, String change, String percent) {
+            dataRefresh = data;
+            priceRefresh = dataRefresh[1];
+            changeRefresh = change;
+            percentRefresh = percent;
+            refreshFavList(dataRefresh[0], priceRefresh, changeRefresh, percentRefresh);
+        }
+
+        @JavascriptInterface
+        public void showDebugMessage() {
+            Toast.makeText(MainActivity.this, "Test", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void refreshFavList(String symbol, String price, String change, String percent) {
+        Toast.makeText(MainActivity.this, symbol + " " + price + " " + change + " " + percent, Toast.LENGTH_LONG).show();
+        for (int i = 0; i < favouriteLists.size(); i++) {
+            if (favouriteLists.get(i).symbol.equals(symbol)) {
+                favouriteLists.get(i).price = price;
+                favouriteLists.get(i).change = change;
+                favouriteLists.get(i).changePercent = percent;
+            }
+        }
+        updateFavList();
+        SharedPreferences.save(this, SHARED_PREFERENCE_KEY, favouriteLists);
+    }
+
+    public void updateFavList() {
+
+        final ArrayList<String> symbolInListView = new ArrayList<>();
+        final ArrayList<String> priceInListView = new ArrayList<>();
+        final ArrayList<String> changeInListView = new ArrayList<>();
+
+        for(int i = 0; i < favouriteLists.size(); i++) {
+            symbolInListView.add(favouriteLists.get(i).symbol);
+            priceInListView.add(favouriteLists.get(i).price);
+            changeInListView.add(favouriteLists.get(i).change + " (" + favouriteLists.get(i).changePercent + "%) ");
+        }
+
+        final ListView favListView = (ListView) findViewById(R.id.favListView);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                favListView.setAdapter(new FavouriteListViewAdapter(MainActivity.this, symbolInListView, priceInListView, changeInListView));
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,29 +124,16 @@ public class MainActivity extends AppCompatActivity {
         // Load Data //
         List<FavouriteList> savedFavouriteLists = SharedPreferences.read(this, SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
         favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
-        currentLists = favouriteLists;
-
-        ArrayList<String> symbolInListView = new ArrayList<>();
-        ArrayList<String> priceInListView = new ArrayList<>();
-        ArrayList<String> changeInListView = new ArrayList<>();
-
-        for(int i = 0; i < favouriteLists.size(); i++) {
-            symbolInListView.add(favouriteLists.get(i).symbol);
-            priceInListView.add(favouriteLists.get(i).price);
-            changeInListView.add(favouriteLists.get(i).change + " (" + favouriteLists.get(i).changePercent + "%) ");
-        }
 
         // Favourite List
-        final ListView favListView = (ListView) findViewById(R.id.favListView);
+        ListView favListView = (ListView) findViewById(R.id.favListView);
         registerForContextMenu(favListView);
-        favListView.setAdapter(new FavouriteListViewAdapter(this, symbolInListView, priceInListView, changeInListView));
+        updateFavList();
 
         // Click Event
         favListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                //Toast.makeText(MainActivity.this, "Click: " + position, Toast.LENGTH_LONG).show();
-                clickItemPosition = position;
                 Intent intent = new Intent(MainActivity.this, StockDetailsActivity.class);
                 intent.putExtra("symbolTitle", favouriteLists.get(position).symbol);
                 startActivityForResult(intent, REQ_CODE_STOCK_DETAILS_ACTIVITY);
@@ -113,14 +171,21 @@ public class MainActivity extends AppCompatActivity {
              }
          });
 
+       //String[] COUNTRIES = { "Belgium", "France", "Italy", "Germany", "Spain" }
+        // Set Autocomplete Menu
+        EditText edit = (EditText) findViewById(R.id.stockQuoteInput);
+        ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+        AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
+        autoCompleteTextView.setAdapter(autocompleteAdapter);
+
         // Set Spinner
-        sortSpinner = (Spinner) findViewById(R.id.sortSpinner);
+        Spinner sortSpinner = (Spinner) findViewById(R.id.sortSpinner);
         ArrayAdapter<CharSequence> sortSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sortSpinner, android.R.layout.simple_spinner_item);
         sortSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortSpinner.setAdapter(sortSpinnerAdapter);
         sortSpinner.setOnItemSelectedListener(new MainActivity.sortSpinnerOnItemSelectedListener());
 
-        orderSpinner = (Spinner) findViewById(R.id.orderSpinner);
+        Spinner orderSpinner = (Spinner) findViewById(R.id.orderSpinner);
         ArrayAdapter<CharSequence> orderSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.orderSpinner, android.R.layout.simple_spinner_item);
         orderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         orderSpinner.setAdapter(orderSpinnerAdapter);
@@ -130,8 +195,63 @@ public class MainActivity extends AppCompatActivity {
             orderSpinner.setEnabled(false);
         }
 
+        // Fake Web View
+        WebView webView = (WebView) findViewById(R.id.mainWebView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new jsInterface(this), "Android");
+        String url = "file:///android_asset/www/refresh.html";
+        webView.loadUrl(url);
 
+        // Auto Refresh
+        Switch autoRefresh = (Switch) findViewById(R.id.autoRefreshSwitch);
+        autoRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isAutoRefresh) {
+                    timer = new Timer();
+                    timer.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    jsRefreshFavList();
+                                }
+                            });
+                        }
+                    }, 0, 10000);
+                    isAutoRefresh = true;
+                } else {
+                    timer.cancel();
+                    isAutoRefresh = false;
+                }
+            }
+        });
+
+        // Refresh
+        ImageView imageRefresh = (ImageView) findViewById(R.id.imageRefresh);
+        imageRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                jsRefreshFavList();
+            }
+        });
     }
+
+
+    public void jsRefreshFavList() {
+        WebView webView = (WebView) findViewById(R.id.mainWebView);
+        for (int i = 0; i < favouriteLists.size(); i++) {
+            webView.loadUrl("javascript:refreshFavList('" + favouriteLists.get(i).symbol + "')");
+        }
+    }
+
+
+
+
+    /**
+     *      List Menu
+     */
 
     // Create Menu
     @Override
@@ -143,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Click Menu
+    // Click Menu To Delete
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -151,30 +271,18 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuTitle:
                 return true;
             case R.id.menuNo:
+                Toast.makeText(MainActivity.this, info.position + "", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menuYes:
-
-                // Delete and Save
-                favouriteLists.remove(clickItemPosition);
+                favouriteLists.remove(info.position);
                 SharedPreferences.save(this, SHARED_PREFERENCE_KEY, favouriteLists);
-
-                // Update UI
-                ArrayList<String> symbolInListView = new ArrayList<>();
-                ArrayList<String> priceInListView = new ArrayList<>();
-                ArrayList<String> changeInListView = new ArrayList<>();
-                for(int i = 0; i < favouriteLists.size(); i++) {
-                    symbolInListView.add(favouriteLists.get(i).symbol);
-                    priceInListView.add(favouriteLists.get(i).price);
-                    changeInListView.add(favouriteLists.get(i).change + " (" + favouriteLists.get(i).changePercent + "%) ");
-                }
-                ListView favListView = (ListView) findViewById(R.id.favListView);
-                favListView.setAdapter(new FavouriteListViewAdapter(this, symbolInListView, priceInListView, changeInListView));
-
+                updateFavList();
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
+
 
     /**
      *      Spinner Listener
@@ -244,12 +352,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        final ArrayList<String> symbolInListView = new ArrayList<>();
-        final ArrayList<String> priceInListView = new ArrayList<>();
-        final ArrayList<String> changeInListView = new ArrayList<>();
-
-        //List<FavouriteList> tempLists = new ArrayList<>();
-        currentLists = new ArrayList<>();
+        List<FavouriteList> currentLists = new ArrayList<>();
 
         switch (indicator) {
             case "Symbol" :
@@ -262,18 +365,11 @@ public class MainActivity extends AppCompatActivity {
                     arrayToSortString = tempList.toArray(arrayToSortString);
                 }
                 for (int position = 0; position < favouriteLists.size(); position++) {
-                    String tempSymbol = favouriteLists.get(mapString.get(arrayToSortString[position])).symbol;
-                    String tempPrice = favouriteLists.get(mapString.get(arrayToSortString[position])).price;
-                    String tempChange = favouriteLists.get(mapString.get(arrayToSortString[position])).change;
-                    String tempChangePercent = favouriteLists.get(mapString.get(arrayToSortString[position])).changePercent;
-                    symbolInListView.add(tempSymbol);
-                    priceInListView.add(tempPrice);
-                    changeInListView.add(tempChange + " (" + tempChangePercent + "%) ");
                     FavouriteList tempItem = new FavouriteList();
-                    tempItem.symbol = tempSymbol;
-                    tempItem.price = tempPrice;
-                    tempItem.change = tempChange;
-                    tempItem.changePercent = tempChangePercent;
+                    tempItem.symbol = favouriteLists.get(mapString.get(arrayToSortString[position])).symbol;
+                    tempItem.price = favouriteLists.get(mapString.get(arrayToSortString[position])).price;
+                    tempItem.change = favouriteLists.get(mapString.get(arrayToSortString[position])).change;
+                    tempItem.changePercent = favouriteLists.get(mapString.get(arrayToSortString[position])).changePercent;;
                     currentLists.add(tempItem);
                 }
                 break;
@@ -289,28 +385,18 @@ public class MainActivity extends AppCompatActivity {
                     arrayToSortFloat = tempList.toArray(arrayToSortFloat);
                 }
                 for (int position = 0; position < favouriteLists.size(); position++) {
-                    String tempSymbol = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).symbol;
-                    String tempPrice = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).price;
-                    String tempChange = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).change;
-                    String tempChangePercent = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).changePercent;
-                    symbolInListView.add(tempSymbol);
-                    priceInListView.add(tempPrice);
-                    changeInListView.add(tempChange + " (" + tempChangePercent + "%) ");
                     FavouriteList tempItem = new FavouriteList();
-                    tempItem.symbol = tempSymbol;
-                    tempItem.price = tempPrice;
-                    tempItem.change = tempChange;
-                    tempItem.changePercent = tempChangePercent;
+                    tempItem.symbol = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).symbol;
+                    tempItem.price = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).price;
+                    tempItem.change = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).change;
+                    tempItem.changePercent = favouriteLists.get(mapFloat.get(arrayToSortFloat[position])).changePercent;
                     currentLists.add(tempItem);
                 }
                 break;
         }
 
         favouriteLists = currentLists;
-        ListView favListView = (ListView) MainActivity.this.findViewById(R.id.favListView);
-        favListView.setAdapter(new FavouriteListViewAdapter(MainActivity.this, symbolInListView, priceInListView, changeInListView));
+        updateFavList();
         SharedPreferences.save(this, SHARED_PREFERENCE_KEY, favouriteLists);
     }
-
-
 }
