@@ -5,31 +5,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/newsListView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+        android:layout_height="match_parent">
 
-    <ProgressBar
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="32dp"
-        android:id="@+id/progressNews"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        <ListView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/newsListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
 
-    <TextView
-        android:id="@+id/errMsgNews"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/failToLoadData"
-        android:textSize="24sp"
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"/>
+        <ProgressBar
+            android:id="@+id/progressNews"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/errMsgNews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/failToLoadData"
+            android:textSize="24sp"
+            android:layout_marginTop="64dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"/>
+
+    </FrameLayout>
 
 </LinearLayout>
 

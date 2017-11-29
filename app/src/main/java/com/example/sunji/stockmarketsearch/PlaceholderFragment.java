@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -296,8 +297,7 @@ public class PlaceholderFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((WebView) getActivity().findViewById(R.id.detailsChartWebView)).setVisibility(View.VISIBLE);
-                ((ProgressBar) getActivity().findViewById(R.id.progressCurrentChart)).setVisibility(View.GONE);
+                ((ProgressBar) getActivity().findViewById(R.id.progressOnCurrentChart)).setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -308,6 +308,7 @@ public class PlaceholderFragment extends Fragment {
     public void updateStockDetailsView() {
 
         final ListView stockListView = (ListView) getActivity().findViewById(R.id.stockListView);
+        final FrameLayout detailsChartFrame = (FrameLayout) getActivity().findViewById(R.id.currentChartFrame);
         final WebView webView = (WebView) getActivity().findViewById(R.id.detailsChartWebView);
         final ProgressBar progressCurrentList = (ProgressBar) getActivity().findViewById(R.id.progressCurrentList);
         final ProgressBar progressCurrentChart = (ProgressBar) getActivity().findViewById(R.id.progressCurrentChart);
@@ -331,7 +332,7 @@ public class PlaceholderFragment extends Fragment {
             public void run() {
                 stockListView.setVisibility(View.VISIBLE);
                 stockListView.setAdapter(new StockDetailsListViewAdapter(getActivity(), headerInListView, dataInListView));
-                webView.setVisibility(View.VISIBLE);
+                detailsChartFrame.setVisibility(View.VISIBLE);
                 progressCurrentList.setVisibility(View.GONE);
                 progressCurrentChart.setVisibility(View.GONE);
                 spinner.setEnabled(true);
@@ -350,7 +351,6 @@ public class PlaceholderFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                webView.setVisibility(View.VISIBLE);
                 progressHistorical.setVisibility(View.GONE);
             }
         });
@@ -497,7 +497,8 @@ public class PlaceholderFragment extends Fragment {
         });
 
         // Set Web View Invisible
-        webView.setVisibility(View.GONE);
+        ((FrameLayout) currentView.findViewById(R.id.currentChartFrame)).setVisibility(View.GONE);
+        ((ProgressBar) currentView.findViewById(R.id.progressOnCurrentChart)).setVisibility(View.INVISIBLE);
 
         // Indicator Spinner
         final Spinner spinner = (Spinner) currentView.findViewById(R.id.indicatorSpinner);
@@ -575,8 +576,7 @@ public class PlaceholderFragment extends Fragment {
                         isFacebookReady = false;
                     }
                     if(hideChart) {
-                        ((WebView) getActivity().findViewById(R.id.detailsChartWebView)).setVisibility(View.GONE);
-                        ((ProgressBar) getActivity().findViewById(R.id.progressCurrentChart)).setVisibility(View.VISIBLE);
+                        ((ProgressBar) currentView.findViewById(R.id.progressOnCurrentChart)).setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -620,9 +620,6 @@ public class PlaceholderFragment extends Fragment {
                 //Toast.makeText(getActivity(), "The symbol is: " + symbol, Toast.LENGTH_LONG).show();
             }
         });
-
-        // Set Web View Invisible
-        webView.setVisibility(View.GONE);
 
         // Hide Error Message
         ((TextView) historicalView.findViewById(R.id.errMsgHistorical)).setVisibility(View.GONE);

@@ -100,13 +100,30 @@
 
         </LinearLayout>
 
-        <WebView
-            android:id="@+id/detailsChartWebView"
-            android:layout_width="match_parent"
-            android:layout_height="416dp"
+        <FrameLayout
+            android:id="@+id/currentChartFrame"
             android:layout_marginTop="16dp"
-            android:background="@color/webViewTestColor">
-        </WebView>
+            android:layout_width="match_parent"
+            android:layout_height="416dp">
+
+            <WebView
+                android:id="@+id/detailsChartWebView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:background="@color/webViewTestColor">
+            </WebView>
+
+            <ProgressBar
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                android:id="@+id/progressOnCurrentChart"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
 
         <ProgressBar
             android:layout_marginTop="32dp"
