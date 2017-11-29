@@ -54,7 +54,6 @@ function sendDataToActivity() {
 
 
 function getAutoComplete(inputValue) {
-    //Android.getAutoCompleteData();
     availableTags = [];
     var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getAutoCompleteJSON" ;
     $.ajax({
@@ -64,7 +63,6 @@ function getAutoComplete(inputValue) {
         },
         type: 'GET',
         success: function(result) {
-            //Android.getAutoCompleteData(availableTags);
             generateAutoCompleteList(result);
             Android.getAutoCompleteData(availableTags);
         }
@@ -83,6 +81,5 @@ function generateAutoCompleteList(jsonBody) {
         }
     }
     catch(err) {
-        //Android.getAutoCompleteData(availableTags);
     }
 }

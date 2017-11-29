@@ -100,5 +100,4 @@ public class StockDetailsActivity extends AppCompatActivity {
             return null;
         }
     }
-
 }

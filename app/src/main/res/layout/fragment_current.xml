@@ -32,20 +32,13 @@
             android:layout_marginStart="16dp"
             android:src="@mipmap/facebook_icon"/>
 
-            <!--<com.facebook.login.widget.LoginButton-->
-                <!--android:id="@+id/imageFacebook"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_marginTop="30dp"-->
-                <!--android:layout_marginBottom="30dp" />-->
-
             <ImageView
                 android:id="@+id/imageFavourite"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:src="@drawable/ic_star_border_black_24px"/>
+
         </LinearLayout>
 
         <ListView
@@ -104,8 +97,8 @@
                 android:text="@string/change"
                 android:textColor="@color/change"
                 android:textSize="24sp" />
-        </LinearLayout>
 
+        </LinearLayout>
 
         <WebView
             android:id="@+id/detailsChartWebView"
@@ -134,19 +127,6 @@
             android:layout_marginBottom="32dp"
             android:gravity="center"/>
 
-
-
-
-
     </LinearLayout>
-
-
-
-
-
-
-
-
-
 
 </ScrollView>

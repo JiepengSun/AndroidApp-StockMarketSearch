@@ -113,7 +113,6 @@ function sendDataToActivity() {
     stockDetailsData.push(low + " - " + high);
     stockDetailsData.push(volume);
     Android.getStockDetailsData(stockDetailsData, change, changePercent);
-    //Android.showToast("Data from JS");
 }
 
 // Get SMA //
@@ -533,19 +532,12 @@ function sendChartLinkToActivity(indicators) {
         data: dataString,
         url: exportUrl,
         success: function (data) {
-//            FB.ui({
-//                method: 'feed',
-//                link: exportUrl + data,
-//            }, function(response){});
             Android.getChartLink(exportUrl + data, indicators);
         },
         error: function (err) {
             debugger;
         }
     });
-
-
-    //Android.getChartLink();
 }
 
 

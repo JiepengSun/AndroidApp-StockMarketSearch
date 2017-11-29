@@ -94,10 +94,7 @@ public class PlaceholderFragment extends Fragment {
                 break;
         }
         return rootView;
-
-
     }
-
 
     /**
      *      Variables
@@ -177,51 +174,61 @@ public class PlaceholderFragment extends Fragment {
         @JavascriptInterface
         public void priceIsReady() {
             isReadyPrice = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void smaIsReady() {
             isReadySMA = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void emaIsReady() {
             isReadyEMA = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void stochIsReady() {
             isReadySTOCH = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void rsiIsReady() {
             isReadyRSI = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void adxIsReady() {
             isReadyADX = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void cciIsReady() {
             isReadyCCI = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void bbandsIsReady() {
             isReadyBBANDS = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void macdIsReady() {
             isReadyMACD = true;
+            showChart();
         }
 
         @JavascriptInterface
         public void showErrorMessage() {
             displayErrorMessage();
+            showChart();
         }
 
         @JavascriptInterface
@@ -264,7 +271,6 @@ public class PlaceholderFragment extends Fragment {
             isFacebookReady = true;
             chartLink = link;
         }
-
     }
 
     public void displayErrorMessage() {
@@ -286,6 +292,15 @@ public class PlaceholderFragment extends Fragment {
         });
     }
 
+    public void showChart() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((WebView) getActivity().findViewById(R.id.detailsChartWebView)).setVisibility(View.VISIBLE);
+                ((ProgressBar) getActivity().findViewById(R.id.progressCurrentChart)).setVisibility(View.GONE);
+            }
+        });
+    }
 
     /**
      *      Update UI
@@ -375,7 +390,6 @@ public class PlaceholderFragment extends Fragment {
             }
         });
     }
-
 
     /**
      *      Current Page
@@ -479,7 +493,6 @@ public class PlaceholderFragment extends Fragment {
             public void onPageFinished (WebView view, String url) {
                 symbol = getActivity().getIntent().getStringExtra("symbolTitle");
                 webView.loadUrl("javascript:getPrice('" + symbol + "')");
-                //webView.loadUrl("javascript:getNewsFeed('" + symbol + "')");
             }
         });
 
@@ -509,6 +522,7 @@ public class PlaceholderFragment extends Fragment {
                     // Call JavaScript Functions
                     String spinnerText = spinner.getSelectedItem().toString();
                     String url = "javascript:getPrice('" + symbol + "')";
+                    boolean hideChart = false;
                     switch (spinnerText) {
                         case "Price":
                             url = !isReadyPrice ? "javascript:getPrice('" + symbol + "')" : "javascript:drawPriceChart()";
@@ -517,40 +531,52 @@ public class PlaceholderFragment extends Fragment {
                         case "SMA":
                             url = !isReadySMA ? "javascript:getSMA()" : "javascript:drawSMAChart()";
                             chartLink = smaChartLink;
+                            hideChart = !isReadySMA;
                             break;
                         case "EMA":
                             url = !isReadyEMA ? "javascript:getEMA()" : "javascript:drawEMAChart()";
                             chartLink = emaChartLink;
+                            hideChart = !isReadyEMA;
                             break;
                         case "STOCH":
                             url = !isReadySTOCH ? "javascript:getSTOCH()" : "javascript:drawSTOCHChart()";
                             chartLink = stochChartLink;
+                            hideChart = !isReadySTOCH;
                             break;
                         case "RSI":
                             url = !isReadyRSI ? "javascript:getRSI()" : "javascript:drawRSIChart()";
                             chartLink = rsiChartLink;
+                            hideChart = !isReadyRSI;
                             break;
                         case "ADX":
                             url = !isReadyADX ? "javascript:getADX()" : "javascript:drawADXChart()";
                             chartLink = adxChartLink;
+                            hideChart = !isReadyADX;
                             break;
                         case "CCI":
                             url = !isReadyCCI ? "javascript:getCCI()" : "javascript:drawCCIChart()";
                             chartLink = cciChartLink;
+                            hideChart = !isReadyCCI;
                             break;
                         case "BBANDS":
                             url = !isReadyBBANDS ? "javascript:getBBANDS()" : "javascript:drawBBANDSChart()";
                             chartLink = bbandsChartLink;
+                            hideChart = !isReadyBBANDS;
                             break;
                         case "MACD":
                             url = !isReadyMACD ? "javascript:getMACD()" : "javascript:drawMACDChart()";
                             chartLink = macdChartLink;
+                            hideChart = !isReadyMACD;
                             break;
                     }
                     webView.loadUrl(url);
                     if(chartLink.equals("")) {
                         ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
                         isFacebookReady = false;
+                    }
+                    if(hideChart) {
+                        ((WebView) getActivity().findViewById(R.id.detailsChartWebView)).setVisibility(View.GONE);
+                        ((ProgressBar) getActivity().findViewById(R.id.progressCurrentChart)).setVisibility(View.VISIBLE);
                     }
                 }
             }

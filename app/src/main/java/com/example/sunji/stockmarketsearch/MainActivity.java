@@ -60,11 +60,9 @@ public class MainActivity extends AppCompatActivity {
     String percentRefresh;
 
     private boolean isAutoRefresh = false;
-    private boolean isRefresh = false;
     private int numToRefresh;
     private int numRefreshed;
 
-    private String[] autoCompleteData;
     private String[] availableTags = new String[] {"1"};
 
     /**
@@ -164,11 +162,9 @@ public class MainActivity extends AppCompatActivity {
         // Set Refresh Progress Bar Invisible
         ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.INVISIBLE);
 
-
         // Load Data //
         List<FavouriteList> savedFavouriteLists = SharedPreferences.read(this, SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
         favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
-
 
         // Update Favourite List
         ListView favListView = (ListView) findViewById(R.id.favListView);
@@ -186,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQ_CODE_STOCK_DETAILS_ACTIVITY);
             }
         });
-
 
         // Auto Complete
         ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, availableTags);
@@ -224,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // Click Get Quote Button
         TextView getQuote = (TextView) findViewById(R.id.getQuote);
         getQuote.setOnClickListener(new View.OnClickListener() {
@@ -242,10 +236,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "Please Enter a Stock Name or Symbol", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
-
 
         // Click Clear Button
         TextView clear = (TextView) findViewById(R.id.clear);
@@ -257,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
                  ((AutoCompleteTextView) findViewById(R.id.autoCompleteTextView)).setText(newString);
              }
          });
-
 
         // Set Spinner
         Spinner sortSpinner = (Spinner) findViewById(R.id.sortSpinner);
@@ -275,7 +266,6 @@ public class MainActivity extends AppCompatActivity {
             sortSpinner.setEnabled(false);
             orderSpinner.setEnabled(false);
         }
-
 
         // Fake Web View
         WebView webView = (WebView) findViewById(R.id.mainWebView);
@@ -313,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // Refresh
         ImageView imageRefresh = (ImageView) findViewById(R.id.imageRefresh);
         imageRefresh.setOnClickListener(new View.OnClickListener() {
@@ -323,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     // Refresh Fav List
     public void jsRefreshFavList() {
@@ -335,7 +323,6 @@ public class MainActivity extends AppCompatActivity {
             webView.loadUrl("javascript:refreshFavList('" + favouriteLists.get(i).symbol + "')");
         }
     }
-
 
     /**
      *      List Menu

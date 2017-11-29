@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.sunji.stockmarketsearch.StockDetailsActivity">
 
-    <android.support.design.widget.TabLayout
+git     <android.support.design.widget.TabLayout
         android:id="@+id/viewPagerTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

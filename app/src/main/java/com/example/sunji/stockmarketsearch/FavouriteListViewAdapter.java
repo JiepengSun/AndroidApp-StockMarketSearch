@@ -57,7 +57,6 @@ public class FavouriteListViewAdapter extends BaseAdapter {
         } else {
             ((TextView) view.findViewById(R.id.favChange)).setTextColor(Color.parseColor("#1e8000"));
         }
-
         return view;
     }
 }
