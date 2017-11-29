@@ -79,6 +79,7 @@ function getPriceData(jsonObj) {
 
 	drawPriceChart();
 	sendDataToActivity();
+	sendChartLinkToActivity("Price");
 	Android.priceIsReady();
 	getNewsFeed(symbol);
 }
@@ -142,6 +143,7 @@ function getSMAData(jsonObj) {
     arraySMAData.reverse();
     SMA_title = jsonObj["Meta Data"]["2: Indicator"];
     drawSMAChart();
+    sendChartLinkToActivity("SMA");
     Android.smaIsReady();
 }
 
@@ -181,6 +183,7 @@ function getEMAData(jsonObj) {
     arrayEMAData.reverse();
     EMA_title = jsonObj["Meta Data"]["2: Indicator"];
     drawEMAChart();
+    sendChartLinkToActivity("EMA");
     Android.emaIsReady();
 }
 
@@ -222,6 +225,7 @@ function getSTOCHData(jsonObj) {
     arraySTOCHSlowK.reverse();
     STOCH_title = jsonObj["Meta Data"]["2: Indicator"];
     drawSTOCHChart();
+    sendChartLinkToActivity("STOCH");
     Android.stochIsReady();
 }
 
@@ -264,6 +268,7 @@ var keys = Object.keys(jsonObj["Technical Analysis: RSI"]);
     arrayRSIData.reverse();
     RSI_title = jsonObj["Meta Data"]["2: Indicator"];
     drawRSIChart();
+    sendChartLinkToActivity("RSI");
     Android.rsiIsReady();
 }
 
@@ -303,6 +308,7 @@ function getADXData(jsonObj) {
     arrayADXData.reverse();
     ADX_title = jsonObj["Meta Data"]["2: Indicator"];
     drawADXChart();
+    sendChartLinkToActivity("ADX");
     Android.adxIsReady();
 }
 
@@ -342,6 +348,7 @@ function getCCIData(jsonObj) {
     arrayCCIData.reverse();
     CCI_title = jsonObj["Meta Data"]["2: Indicator"];
     drawCCIChart();
+    sendChartLinkToActivity("CCI");
     Android.cciIsReady();
 }
 
@@ -385,6 +392,7 @@ function getBBANDSData(jsonObj) {
     arrayBBANDSRealUpperBand.reverse();
     BBANDS_title = jsonObj["Meta Data"]["2: Indicator"];
     drawBBANDSChart();
+    sendChartLinkToActivity("BBANDS");
     Android.bbandsIsReady();
 }
 
@@ -433,6 +441,7 @@ function getMACDData(jsonObj) {
     arrayMACDSignal.reverse();
     MACD_title = jsonObj["Meta Data"]["2: Indicator"];
     drawMACDChart();
+    sendChartLinkToActivity("MACD");
     Android.macdIsReady();
 }
 
@@ -502,6 +511,41 @@ function getNewsFeedData(xml) {
 
 function sendNewsFeedToActivity() {
     Android.getNewsFeed(newsFeedTitle, newsFeedAuthor, newsFeedDate, newsFeedLink);
+}
+
+function sendChartLinkToActivity(indicators) {
+
+    var exportUrl = 'http://export.highcharts.com/';
+    var options = {
+        title: title,
+        subtitle: subtitle,
+        xAxis: xAxis,
+        yAxis: yAxis,
+        plotOptions: plotOptions,
+        legend: legend,
+        series: series
+    }
+    var optionsStr = JSON.stringify(options);
+    var dataString = encodeURI('async=true&type=jpeg&width=1920&options=' + optionsStr);
+
+    $.ajax({
+        type: 'POST',
+        data: dataString,
+        url: exportUrl,
+        success: function (data) {
+//            FB.ui({
+//                method: 'feed',
+//                link: exportUrl + data,
+//            }, function(response){});
+            Android.getChartLink(exportUrl + data, indicators);
+        },
+        error: function (err) {
+            debugger;
+        }
+    });
+
+
+    //Android.getChartLink();
 }
 
 

@@ -25,6 +25,14 @@ import android.widget.Toast;
 
 import com.example.sunji.stockmarketsearch.model.FavouriteList;
 import com.example.sunji.stockmarketsearch.util.SharedPreferences;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Array;
@@ -35,6 +43,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -85,6 +94,8 @@ public class PlaceholderFragment extends Fragment {
                 break;
         }
         return rootView;
+
+
     }
 
 
@@ -117,6 +128,18 @@ public class PlaceholderFragment extends Fragment {
     boolean isReadyCCI = false;
     boolean isReadyBBANDS = false;
     boolean isReadyMACD = false;
+
+    String chartLink;
+    String priceChartLink = "";
+    String smaChartLink = "";
+    String emaChartLink = "";
+    String stochChartLink = "";
+    String rsiChartLink = "";
+    String adxChartLink = "";
+    String cciChartLink = "";
+    String bbandsChartLink = "";
+    String macdChartLink = "";
+    boolean isFacebookReady =false;
 
     /**
      *      JavaScript Interface
@@ -199,6 +222,47 @@ public class PlaceholderFragment extends Fragment {
         @JavascriptInterface
         public void showErrorMessage() {
             displayErrorMessage();
+        }
+
+        @JavascriptInterface
+        public void getChartLink(String link, String indicators) {
+            switch (indicators) {
+                case "Price":
+                    priceChartLink = link;
+                    break;
+                case "SMA":
+                    smaChartLink = link;
+                    break;
+                case "EMA":
+                    emaChartLink = link;
+                    break;
+                case "STOCH":
+                    stochChartLink = link;
+                    break;
+                case "RSI":
+                    rsiChartLink = link;
+                    break;
+                case "ADX":
+                    adxChartLink = link;
+                    break;
+                case "CCI":
+                    cciChartLink = link;
+                    break;
+                case "BBANDS":
+                    bbandsChartLink = link;
+                    break;
+                case "MACD":
+                    macdChartLink = link;
+                    break;
+            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((ImageView) getActivity().findViewById(R.id.imageFacebook)).getDrawable().setAlpha(255);
+                }
+            });
+            isFacebookReady = true;
+            chartLink = link;
         }
 
     }
@@ -320,7 +384,7 @@ public class PlaceholderFragment extends Fragment {
     private static final String SHARED_PREFERENCE_KEY = "shared_preference_keys";
 
     // CURRENT PAGE //
-    public View setCurrentView(View currentView) {
+    public View setCurrentView(final View currentView) {
 
         symbol = StockDetailsActivity.getSymbol();
 
@@ -389,9 +453,16 @@ public class PlaceholderFragment extends Fragment {
         imageFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(isFacebookReady) {
+                    ShareLinkContent content = new ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse(chartLink))
+                            .build();
+                    ShareDialog shareDialog = new ShareDialog(getActivity());
+                    shareDialog.show(content);
+                }
             }
         });
+
 
         // Set Stock Details List View Invisible
         ListView stockListView = (ListView) currentView.findViewById(R.id.stockListView);
@@ -441,33 +512,46 @@ public class PlaceholderFragment extends Fragment {
                     switch (spinnerText) {
                         case "Price":
                             url = !isReadyPrice ? "javascript:getPrice('" + symbol + "')" : "javascript:drawPriceChart()";
+                            chartLink = priceChartLink;
                             break;
                         case "SMA":
                             url = !isReadySMA ? "javascript:getSMA()" : "javascript:drawSMAChart()";
+                            chartLink = smaChartLink;
                             break;
                         case "EMA":
                             url = !isReadyEMA ? "javascript:getEMA()" : "javascript:drawEMAChart()";
+                            chartLink = emaChartLink;
                             break;
                         case "STOCH":
                             url = !isReadySTOCH ? "javascript:getSTOCH()" : "javascript:drawSTOCHChart()";
+                            chartLink = stochChartLink;
                             break;
                         case "RSI":
                             url = !isReadyRSI ? "javascript:getRSI()" : "javascript:drawRSIChart()";
+                            chartLink = rsiChartLink;
                             break;
                         case "ADX":
                             url = !isReadyADX ? "javascript:getADX()" : "javascript:drawADXChart()";
+                            chartLink = adxChartLink;
                             break;
                         case "CCI":
                             url = !isReadyCCI ? "javascript:getCCI()" : "javascript:drawCCIChart()";
+                            chartLink = cciChartLink;
                             break;
                         case "BBANDS":
                             url = !isReadyBBANDS ? "javascript:getBBANDS()" : "javascript:drawBBANDSChart()";
+                            chartLink = bbandsChartLink;
                             break;
                         case "MACD":
                             url = !isReadyMACD ? "javascript:getMACD()" : "javascript:drawMACDChart()";
+                            chartLink = macdChartLink;
                             break;
                     }
                     webView.loadUrl(url);
+                    if(chartLink.equals("")) {
+                        ((ImageView) currentView.findViewById(R.id.imageFacebook)).getDrawable().setAlpha(64);
+                        isFacebookReady = false;
+                    }
                 }
             }
         });

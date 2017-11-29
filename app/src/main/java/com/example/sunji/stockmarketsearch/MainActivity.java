@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import com.example.sunji.stockmarketsearch.model.FavouriteList;
 import com.example.sunji.stockmarketsearch.util.SharedPreferences;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Array;
@@ -154,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Init Facebook
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         // Set Refresh Progress Bar Invisible
         ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.INVISIBLE);
