@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     String percentRefresh;
 
     private boolean isAutoRefresh = false;
+    private boolean isRefresh = false;
+    private int numToRefresh;
+    private int numRefreshed;
 
     private String[] autoCompleteData;
     private String[] availableTags = new String[] {"1"};
@@ -74,6 +78,13 @@ public class MainActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void getRefreshData(String[] data, String change, String percent) {
+            if(!isAutoRefresh) {
+                numRefreshed++;
+                if(numRefreshed == numToRefresh) {
+                    numRefreshed = 0;
+                    ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.INVISIBLE);
+                }
+            }
             dataRefresh = data;
             priceRefresh = dataRefresh[1];
             changeRefresh = change;
@@ -102,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshFavList(String symbol, String price, String change, String percent) {
-        Toast.makeText(MainActivity.this, symbol + " " + price + " " + change + " " + percent, Toast.LENGTH_LONG).show();
+        //Toast.makeText(MainActivity.this, symbol + " " + price + " " + change + " " + percent, Toast.LENGTH_LONG).show();
         for (int i = 0; i < favouriteLists.size(); i++) {
             if (favouriteLists.get(i).symbol.equals(symbol)) {
                 favouriteLists.get(i).price = price;
@@ -143,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set Refresh Progress Bar Invisible
+        ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.INVISIBLE);
+
 
         // Load Data //
         List<FavouriteList> savedFavouriteLists = SharedPreferences.read(this, SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
@@ -268,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
         autoRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(!isAutoRefresh) {
                     timer = new Timer();
                     timer.scheduleAtFixedRate(new TimerTask() {
@@ -282,9 +298,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 0, 10000);
                     isAutoRefresh = true;
+                    ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.VISIBLE);
                 } else {
                     timer.cancel();
                     isAutoRefresh = false;
+                    ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -303,6 +321,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Refresh Fav List
     public void jsRefreshFavList() {
+        numToRefresh = favouriteLists.size();
+        numRefreshed = 0;
+        ((ProgressBar) findViewById(R.id.progressRefresh)).setVisibility(View.VISIBLE);
         WebView webView = (WebView) findViewById(R.id.mainWebView);
         for (int i = 0; i < favouriteLists.size(); i++) {
             webView.loadUrl("javascript:refreshFavList('" + favouriteLists.get(i).symbol + "')");

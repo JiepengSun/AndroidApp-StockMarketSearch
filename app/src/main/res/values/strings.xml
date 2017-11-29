@@ -42,4 +42,6 @@
         <item>Ascending</item>
         <item>Descending</item>
     </string-array>
+    <string name="facebook_app_id">1862896700707047</string>
+    <string name="fb_login_protocol_scheme">fb1862896700707047</string>
 </resources>
