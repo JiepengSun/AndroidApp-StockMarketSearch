@@ -18,22 +18,26 @@
         android:textColor="@color/stockMarketSearchTitle"
         android:text="@string/stockMarketSearchTitle"/>
 
-    <EditText
-        android:id="@+id/stockQuoteInput"
+    <!--<EditText-->
+        <!--android:id="@+id/stockQuoteInput"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:layout_marginLeft="32dp"-->
+        <!--android:layout_marginRight="32dp"-->
+        <!--android:hint="@string/stockQuoteInputHint" />-->
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
-        android:hint="@string/stockQuoteInputHint" />
-
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp" />
+        android:completionThreshold="1"
+        android:hint="e.g.AAPL" />
 
     <LinearLayout
         android:layout_width="match_parent"

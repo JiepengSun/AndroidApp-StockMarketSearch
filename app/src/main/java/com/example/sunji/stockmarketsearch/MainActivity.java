@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -56,9 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isAutoRefresh = false;
 
-    private static final String[] COUNTRIES = new String[] {
-            "Belgium", "France", "Italy", "Germany", "Spain"
-    };
+    private String[] autoCompleteData;
+    private String[] availableTags = new String[] {"1"};
+
+    /**
+     *      JavaScript Interface
+     */
 
     private class jsInterface {
         Context mContext;
@@ -79,6 +84,20 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public void showDebugMessage() {
             Toast.makeText(MainActivity.this, "Test", Toast.LENGTH_LONG).show();
+        }
+
+        @JavascriptInterface
+        public void getAutoCompleteData(String[] tags) {
+            availableTags = new String[] {};
+            availableTags = tags;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_dropdown_item_1line, availableTags);
+                    AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
+                    autoCompleteTextView.setAdapter(autocompleteAdapter);
+                }
+            });
         }
     }
 
@@ -116,6 +135,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *      OnCreate
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,31 +148,73 @@ public class MainActivity extends AppCompatActivity {
         List<FavouriteList> savedFavouriteLists = SharedPreferences.read(this, SHARED_PREFERENCE_KEY, new TypeToken<List<FavouriteList>>(){});
         favouriteLists = savedFavouriteLists == null ? new ArrayList<FavouriteList>() : savedFavouriteLists;
 
-        // Favourite List
+
+        // Update Favourite List
         ListView favListView = (ListView) findViewById(R.id.favListView);
         registerForContextMenu(favListView);
         updateFavList();
 
-        // Click Event
         favListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if(isAutoRefresh) {
+                    timer.cancel();
+                }
                 Intent intent = new Intent(MainActivity.this, StockDetailsActivity.class);
                 intent.putExtra("symbolTitle", favouriteLists.get(position).symbol);
                 startActivityForResult(intent, REQ_CODE_STOCK_DETAILS_ACTIVITY);
             }
         });
 
+
+        // Auto Complete
+        ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, availableTags);
+        autocompleteAdapter.setNotifyOnChange(true);
+        final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
+        autoCompleteTextView.setAdapter(autocompleteAdapter);
+
+        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+
+            WebView webView = (WebView) findViewById(R.id.mainWebView);
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                webView.loadUrl("javascript:getAutoComplete('" + autoCompleteTextView.getText().toString() + "')");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapterView.getItemAtPosition(i).toString();
+                int index = item.indexOf("-");
+                if(index > 0) {
+                    String formatInput = item.substring(0, index);
+                    autoCompleteTextView.setText(formatInput);
+                }
+            }
+        });
+
+
         // Click Get Quote Button
         TextView getQuote = (TextView) findViewById(R.id.getQuote);
         getQuote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText text = (EditText) findViewById(R.id.stockQuoteInput);
+                AutoCompleteTextView text = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
                 String input = text.getText().toString();
                 if(!input.isEmpty()) {
-                    // Toast.makeText(MainActivity.this, "The Inout is: " + input, Toast.LENGTH_LONG).show();
-                    // Active Stock Details Activity
+                    if(isAutoRefresh) {
+                        timer.cancel();
+                    }
                     Intent intent = new Intent(MainActivity.this, StockDetailsActivity.class);
                     intent.putExtra("symbolTitle", input);
                     startActivityForResult(intent, REQ_CODE_STOCK_DETAILS_ACTIVITY);
@@ -160,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // Click Clear Button
         TextView clear = (TextView) findViewById(R.id.clear);
         clear.setOnClickListener(new View.OnClickListener() {
@@ -167,16 +233,10 @@ public class MainActivity extends AppCompatActivity {
              public void onClick(View view) {
                  //Toast.makeText(MainActivity.this, "Click the Clear Button", Toast.LENGTH_LONG).show();
                  String newString = "";
-                 ((TextView) findViewById(R.id.stockQuoteInput)).setText(newString);
+                 ((AutoCompleteTextView) findViewById(R.id.autoCompleteTextView)).setText(newString);
              }
          });
 
-       //String[] COUNTRIES = { "Belgium", "France", "Italy", "Germany", "Spain" }
-        // Set Autocomplete Menu
-        EditText edit = (EditText) findViewById(R.id.stockQuoteInput);
-        ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
-        AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
-        autoCompleteTextView.setAdapter(autocompleteAdapter);
 
         // Set Spinner
         Spinner sortSpinner = (Spinner) findViewById(R.id.sortSpinner);
@@ -194,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
             sortSpinner.setEnabled(false);
             orderSpinner.setEnabled(false);
         }
+
 
         // Fake Web View
         WebView webView = (WebView) findViewById(R.id.mainWebView);
@@ -228,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // Refresh
         ImageView imageRefresh = (ImageView) findViewById(R.id.imageRefresh);
         imageRefresh.setOnClickListener(new View.OnClickListener() {
@@ -239,14 +301,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    // Refresh Fav List
     public void jsRefreshFavList() {
         WebView webView = (WebView) findViewById(R.id.mainWebView);
         for (int i = 0; i < favouriteLists.size(); i++) {
             webView.loadUrl("javascript:refreshFavList('" + favouriteLists.get(i).symbol + "')");
         }
     }
-
-
 
 
     /**

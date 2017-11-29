@@ -3,6 +3,8 @@ var lastPrice;
 var change;
 var changePercent;
 
+var availableTags = [];
+
 function refreshFavList(symbol) {
     var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getStockQuote" ;
     $.ajax({
@@ -48,4 +50,39 @@ function sendDataToActivity() {
     refreshData.push(lastPrice);
     refreshData.push(change + " (" + changePercent + "%) ");
     Android.getRefreshData(refreshData, change, changePercent);
+}
+
+
+function getAutoComplete(inputValue) {
+    //Android.getAutoCompleteData();
+    availableTags = [];
+    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getAutoCompleteJSON" ;
+    $.ajax({
+        url: requestLink,
+        data:{
+            'symbol': inputValue
+        },
+        type: 'GET',
+        success: function(result) {
+            //Android.getAutoCompleteData(availableTags);
+            generateAutoCompleteList(result);
+            Android.getAutoCompleteData(availableTags);
+        }
+     });
+}
+
+function generateAutoCompleteList(jsonBody) {
+    try {
+        var jsonObj = JSON.parse(jsonBody);
+        index = 0;
+        while(index < 5 && jsonObj[index] != null) {
+            value = Object.values(jsonObj[index]);
+            tag = value[0] + "-" + value[1] + "(" + value[2] + ")";
+            availableTags.push(tag);
+            index++;
+        }
+    }
+    catch(err) {
+        //Android.getAutoCompleteData(availableTags);
+    }
 }
