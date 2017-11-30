@@ -73,7 +73,7 @@ function generateAutoCompleteList(jsonBody) {
     try {
         var jsonObj = JSON.parse(jsonBody);
         index = 0;
-        while(index < 5 && jsonObj[index] != null) {
+        while(index < 20 && jsonObj[index] != null) {
             value = Object.values(jsonObj[index]);
             tag = value[0] + "-" + value[1] + "(" + value[2] + ")";
             availableTags.push(tag);
