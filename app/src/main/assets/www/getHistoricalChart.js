@@ -1,6 +1,6 @@
 function getHistoricalChart(symbol) {
     historicalChartSymbol = symbol;
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getHistoricalChart" ;
+    var requestLink = "http://52.53.186.113/getHistoricalChart" ;
     $.ajax({
         url: requestLink,
         data:{

@@ -6,7 +6,7 @@ var changePercent;
 var availableTags = [];
 
 function refreshFavList(symbol) {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getStockQuote" ;
+    var requestLink = "http://52.53.186.113/getStockQuote" ;
     $.ajax({
     	url: requestLink,
     	data:{
@@ -55,7 +55,7 @@ function sendDataToActivity() {
 
 function getAutoComplete(inputValue) {
     availableTags = [];
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getAutoCompleteJSON" ;
+    var requestLink = "http://52.53.186.113/getAutoCompleteJSON" ;
     $.ajax({
         url: requestLink,
         data:{

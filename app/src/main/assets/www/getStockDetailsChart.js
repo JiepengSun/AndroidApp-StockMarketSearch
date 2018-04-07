@@ -1,6 +1,6 @@
 // Price //
 function getPrice(symbol) {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getStockQuote" ;
+    var requestLink = "http://52.53.186.113/getStockQuote" ;
     $.ajax({
     	url: requestLink,
     	data:{
@@ -117,7 +117,7 @@ function sendDataToActivity() {
 
 // Get SMA //
 function getSMA() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getSMA" ;
+    var requestLink = "http://52.53.186.113/getSMA" ;
     $.ajax({
         url: requestLink,
         data:{
@@ -157,7 +157,7 @@ function drawSMAChart() {
 
 // Get EMA //
 function getEMA() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getEMA" ;
+    var requestLink = "http://52.53.186.113/getEMA" ;
     $.ajax({
         url: requestLink,
         data:{
@@ -197,7 +197,7 @@ function drawEMAChart() {
 
 // Get STOCH //
 function getSTOCH() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getSTOCH" ;
+    var requestLink = "http://52.53.186.113/getSTOCH" ;
     $.ajax({
         url: requestLink,
         data:{
@@ -242,7 +242,7 @@ function drawSTOCHChart() {
 
 // Get RSI //
 function getRSI() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getRSI" ;
+    var requestLink = "http://52.53.186.113/getRSI" ;
     $.ajax({
        url: requestLink,
        data:{
@@ -282,7 +282,7 @@ function drawRSIChart() {
 
 // Get ADX //
 function getADX() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getADX" ;
+    var requestLink = "http://52.53.186.113/getADX" ;
     $.ajax({
        url: requestLink,
        data:{
@@ -322,7 +322,7 @@ function drawADXChart() {
 
 // Get CCI //
 function getCCI() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getCCI" ;
+    var requestLink = "http://52.53.186.113/getCCI" ;
     $.ajax({
        url: requestLink,
        data:{
@@ -362,7 +362,7 @@ function drawCCIChart() {
 
 // Get BBANDS //
 function getBBANDS() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getBBANDS" ;
+    var requestLink = "http://52.53.186.113/getBBANDS" ;
     $.ajax({
        url: requestLink,
        data:{
@@ -410,7 +410,7 @@ function drawBBANDSChart() {
 
 // Get MACD //
 function getMACD() {
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getMACD" ;
+    var requestLink = "http://52.53.186.113/getMACD" ;
     $.ajax({
        url: requestLink,
        data:{
@@ -461,7 +461,7 @@ function drawMACDChart() {
 function getNewsFeed(symbol) {
 
     //sendNewsFeedToActivity();
-    var requestLink = "http://stockmarketsearch-env.us-west-1.elasticbeanstalk.com/getNewsFeed" ;
+    var requestLink = "http://52.53.186.113/getNewsFeed" ;
     $.ajax({
        url: requestLink,
        data:{
